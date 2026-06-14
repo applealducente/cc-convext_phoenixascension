@@ -1,6 +1,7 @@
-// ---------- Side nav switching ----------
-const navItems = document.querySelectorAll('.nav-item[data-target]');
+// ---------- Tab nav switching ----------
+const navItems = document.querySelectorAll('.tab[data-target]');
 const panels = document.querySelectorAll('.panel');
+const pageTitle = document.getElementById('pageTitle');
 
 navItems.forEach(item => {
   item.addEventListener('click', () => {
@@ -11,8 +12,8 @@ navItems.forEach(item => {
 
     panels.forEach(p => p.classList.toggle('active', p.id === target));
 
-    // scroll content to top on switch
-    document.querySelector('.content').scrollTo({ top: 0, behavior: 'instant' });
+    pageTitle.textContent = item.textContent;
+
     window.scrollTo({ top: 0, behavior: 'instant' });
   });
 });
@@ -53,6 +54,23 @@ document.addEventListener('keydown', (e) => {
     document.querySelectorAll('.modal-overlay.open').forEach(closeModal);
   }
 });
+
+// ---------- Menu / Admin buttons (placeholder) ----------
+const menuBtn = document.getElementById('menuBtn');
+const adminBtn = document.getElementById('adminBtn');
+const tabnav = document.getElementById('tabnav');
+
+if (menuBtn && tabnav) {
+  menuBtn.addEventListener('click', () => {
+    tabnav.classList.toggle('hidden-on-mobile');
+  });
+}
+
+if (adminBtn) {
+  adminBtn.addEventListener('click', () => {
+    alert('Admin tools are not yet set up for this guide.');
+  });
+}
 
 // ---------- Pricing constants ----------
 // Hourly rate is tied to membership fee tier.

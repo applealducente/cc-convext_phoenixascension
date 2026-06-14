@@ -9,45 +9,32 @@
 <body>
 
 <header class="topbar">
-  <div class="brand">
-    <span class="brand-mark">HA</span>
-    <span class="brand-name">Sales Script Guide</span>
-  </div>
-  <button class="notes-btn" id="notesBtn" type="button">Notes</button>
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <h1 class="page-title" id="pageTitle">Opening Spiel</h1>
+  <button class="admin-btn" id="adminBtn" type="button">Admin</button>
 </header>
 
-<div class="layout">
+<nav class="tabnav" id="tabnav">
+  <button class="tab active" data-target="opening">Opening Spiel</button>
+  <button class="tab" data-target="discovery">Discovery</button>
+  <button class="tab" data-target="elevator">Elevator Pitch</button>
+  <button class="tab" data-target="data-gathering">Data Gathering</button>
+  <button class="tab" data-target="sales-pitch">Sales Pitch</button>
+  <button class="tab" data-target="booking">Booking</button>
+  <button class="tab" data-target="booking-proper">Booking Proper</button>
+  <button class="tab" data-target="verbatim">Verbatim</button>
+  <button class="tab" data-target="value-statements">Value Statements</button>
+  <button class="tab" data-target="objections">Common Objections</button>
+  <button class="tab" data-target="discovery-questions">Discovery Questions</button>
+  <button class="tab" data-target="faqs">FAQs</button>
+  <button class="tab" data-target="user-manual">User Manual</button>
+</nav>
 
-  <nav class="sidenav" id="sidenav">
-    <div class="nav-group-label">Phase 1: Opening</div>
-    <button class="nav-item active" data-target="opening">Opening Spiel</button>
-    <button class="nav-item" data-target="discovery">Discovery</button>
-    <button class="nav-item" data-target="elevator">Elevator Pitch</button>
-
-    <div class="nav-group-label">Phase 2: Data &amp; Pitch</div>
-    <button class="nav-item" data-target="data-gathering">Data Gathering</button>
-    <button class="nav-item" data-target="sales-pitch">Sales Pitch</button>
-
-    <div class="nav-group-label">Phase 3: Booking</div>
-    <button class="nav-item" data-target="booking">Booking</button>
-    <button class="nav-item" data-target="booking-proper">Booking Proper</button>
-
-    <div class="nav-group-label">Reference</div>
-    <button class="nav-item" data-target="verbatim">Verbatim</button>
-    <button class="nav-item" data-target="value-statements">Value Statements</button>
-    <button class="nav-item" data-target="objections">Common Objections</button>
-    <button class="nav-item" data-target="discovery-questions">Discovery Questions</button>
-    <button class="nav-item" data-target="faqs">FAQs</button>
-    <button class="nav-item" data-target="user-manual">User Manual</button>
-
-    <div class="nav-group-label">Tools</div>
-    <button class="nav-item tool-trigger" data-modal="cleaningModal">Cleaning Calculator</button>
-    <button class="nav-item tool-trigger" data-modal="etfModal">ETF Calculator</button>
-    <button class="nav-item tool-trigger" data-modal="oneTimeModal">One-Time Cleaning Calculator</button>
-    <button class="nav-item tool-trigger" data-modal="negotiationModal">Negotiation Calculator</button>
-  </nav>
-
+<div class="page-wrap">
   <main class="content">
+
 
     <section class="panel active" id="opening">
       <h1>Opening Spiel</h1>
@@ -249,22 +236,42 @@
 
     <section class="panel" id="user-manual">
       <h1>User Manual</h1>
-      <p class="hint">How to use this guide and the calculators during a live call.</p>
-      <ol class="manual-list">
-        <li>Start at <strong>Opening Spiel</strong> to greet the customer and confirm the reason for the call.</li>
-        <li>Move to <strong>Discovery</strong> and <strong>Data Gathering</strong> to collect home details (bedrooms, bathrooms, condition, frequency).</li>
-        <li>Open the <strong>Cleaning Calculator</strong> to generate a price estimate based on those details.</li>
-        <li>Use <strong>Sales Pitch</strong> language to present the estimate and membership value.</li>
-        <li>If they push back, refer to <strong>Common Objections</strong> for response scripts.</li>
-        <li>If they ask about cancelling early, use the <strong>ETF Calculator</strong>.</li>
-        <li>If they want a single cleaning instead of membership, use the <strong>One-Time Cleaning Calculator</strong>.</li>
-        <li>If they want a lower price to commit, use the <strong>Negotiation Calculator</strong> to model a discounted term.</li>
-        <li>Once they agree, move to <strong>Booking</strong> and <strong>Booking Proper</strong> to confirm and close.</li>
-        <li>Jot any call-specific details in <strong>Notes</strong> (top right) — these stay on your device only.</li>
-      </ol>
+      <div class="manual-card">
+        <h3 class="manual-heading">How to use this guide:</h3>
+        <ol class="manual-list">
+          <li>Start with <strong>Opening Spiel</strong> on every call.</li>
+          <li>Move to <strong>Discovery</strong> to understand the customer's needs.</li>
+          <li>Use <strong>Data Gathering</strong> to collect required fields in your CRM.</li>
+          <li>Present the appropriate <strong>Sales Pitch</strong> based on plan type.</li>
+          <li>Complete <strong>Booking</strong> and confirm with <strong>Booking Proper</strong>.</li>
+          <li>Read <strong>Verbatim</strong> scripts exactly as written when required.</li>
+          <li>Use <strong>Value Statements</strong> and <strong>Common Objections</strong> to handle pushback.</li>
+          <li>Refer to <strong>Discovery Questions</strong> and <strong>FAQs</strong> as needed throughout the call.</li>
+          <li>Use the calculator tools on the right toolbar for pricing, ETF, one-time, and negotiation quotes.</li>
+        </ol>
+      </div>
     </section>
 
   </main>
+</div>
+
+<!-- Floating right-side toolbar -->
+<div class="toolbar">
+  <button class="toolbar-btn" id="notesBtn" type="button" title="Notes" aria-label="Notes">
+    <span class="toolbar-icon">🖌️</span>
+  </button>
+  <button class="toolbar-btn" data-modal="cleaningModal" type="button" title="Cleaning Calculator" aria-label="Cleaning Calculator">
+    <span class="toolbar-icon">📋</span>
+  </button>
+  <button class="toolbar-btn" data-modal="etfModal" type="button" title="ETF Calculator" aria-label="ETF Calculator">
+    <span class="toolbar-icon badge-icon">1</span>
+  </button>
+  <button class="toolbar-btn" data-modal="oneTimeModal" type="button" title="One-Time Cleaning Calculator" aria-label="One-Time Cleaning Calculator">
+    <span class="toolbar-icon">🍯</span>
+  </button>
+  <button class="toolbar-btn" data-modal="negotiationModal" type="button" title="Negotiation Calculator" aria-label="Negotiation Calculator">
+    <span class="toolbar-icon">📝</span>
+  </button>
 </div>
 
 <!-- ===================== MODALS ===================== -->
