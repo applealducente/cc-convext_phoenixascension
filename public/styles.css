@@ -104,6 +104,8 @@ body::before {
   padding: 9px 18px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .admin-btn:hover {

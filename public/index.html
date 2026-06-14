@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix Sales Script Guide</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <h1 class="page-title" id="pageTitle">Loading...</h1>
+  <a class="admin-btn" id="adminBtn" href="/admin.html">Admin</a>
+</header>
+
+<nav class="tabnav" id="tabnav"></nav>
+
+<div class="page-wrap">
+  <main class="content" id="content"></main>
+</div>
+
+<!-- Floating right-side toolbar -->
+<div class="toolbar" id="toolbar"></div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- DHJ Voucher Calculator -->
+<div class="modal-overlay" id="cleaningModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>DHJ Voucher Calculator</h2>
+    <h3 class="modal-sub">ForeverClean Membership Pricing</h3>
+
+    <div class="form-row">
+      <label for="cc-hours">First Cleaning Duration</label>
+      <select id="cc-hours"></select>
+    </div>
+
+    <div class="form-row">
+      <label for="cc-membership-fee">Membership Fee</label>
+      <select id="cc-membership-fee"></select>
+    </div>
+
+    <div class="form-row">
+      <label for="cc-frequency">Frequency (times per month)</label>
+      <select id="cc-frequency"></select>
+    </div>
+
+    <button class="calc-btn" id="cc-calculate">Calculate Quote</button>
+
+    <div class="result-box" id="cc-result">
+      <p class="result-placeholder">Select hours, membership fee, and frequency to see the full quote.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ETF Calculator -->
+<div class="modal-overlay" id="etfModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>ETF Calculator</h2>
+    <h3 class="modal-sub" id="etf-sub">Early Termination Fee</h3>
+
+    <div class="form-row">
+      <label for="etf-hours">First Cleaning Hours</label>
+      <select id="etf-hours"></select>
+    </div>
+
+    <button class="calc-btn" id="etf-calculate">Calculate ETF</button>
+
+    <div class="result-box" id="etf-result">
+      <p class="result-placeholder">Select hours to calculate the early termination fee.</p>
+    </div>
+  </div>
+</div>
+
+<!-- One-Time / Trial Cleaning Calculator -->
+<div class="modal-overlay" id="oneTimeModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>One-Time / Trial Calculator</h2>
+    <h3 class="modal-sub">No-Commitment Options</h3>
+
+    <div class="form-row">
+      <label for="ot-hours">Hours Needed</label>
+      <input type="number" id="ot-hours" min="1" step="0.5" value="3">
+    </div>
+
+    <button class="calc-btn" id="ot-calculate">Calculate Options</button>
+
+    <div class="result-box" id="ot-result">
+      <p class="result-placeholder">Enter hours to compare options.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Negotiation Calculator -->
+<div class="modal-overlay" id="negotiationModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>Negotiation Calculator</h2>
+    <h3 class="modal-sub">Membership Fee &amp; Commitment Term</h3>
+
+    <div class="form-row">
+      <label for="neg-mf">Negotiated Membership Fee</label>
+      <select id="neg-mf"></select>
+    </div>
+
+    <div class="form-row">
+      <label for="neg-term">Commitment Term</label>
+      <select id="neg-term"></select>
+    </div>
+
+    <button class="calc-btn" id="neg-calculate">Calculate Negotiation</button>
+
+    <div class="result-box" id="neg-result">
+      <p class="result-label">Negotiation Result</p>
+      <p class="result-total">Total over term: <span id="neg-total">$0.00</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Notes -->
+<div class="modal-overlay" id="notesModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>Notes</h2>
+    <p class="modal-sub-text">Jot down call notes. Saved to this device only.</p>
+    <textarea id="notesArea" placeholder="Type notes here..."></textarea>
+    <div class="notes-actions">
+      <span class="notes-status" id="notesStatus"></span>
+      <button class="calc-btn" id="notesSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
