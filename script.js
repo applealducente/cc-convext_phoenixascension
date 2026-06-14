@@ -74,9 +74,12 @@ if (adminBtn) {
 
 // ---------- Pricing constants ----------
 const ETF_RATE = 35; // $/hr, applies to DHJ Voucher offer
-const DISCOUNTED_RATE = 23; // $/hr after membership kicks in
-const ONE_TIME_RATE = 63; // $/hr, no commitment
-const TRIAL_RATE = 52.5; // $/hr, 30-day trial
+const DISCOUNTED_RATE = 57.75; // $/hr, Regular Cleaning Rate Discounted (25|25)
+const ONE_TIME_RATE = 63; // $/hr, Regular Cleaning Rate (30|30)
+const TRIAL_RATE = 52.5; // $/hr, Trial Cleaning Rate (20|20), 30-day trial
+
+// Hours not available at the Discounted (25|25) tier
+const DISCOUNTED_UNAVAILABLE_HOURS = [2, 2.5];
 
 // DHJ Voucher pricing by hours
 const DHJ_VOUCHERS = {
@@ -102,12 +105,27 @@ document.getElementById('cc-calculate').addEventListener('click', () => {
 
   const voucherPrice = DHJ_VOUCHERS[hours];
   const nationalAvg = NATIONAL_AVG[hours];
+  const etf = hours * ETF_RATE;
+  const isDiscountUnavailable = DISCOUNTED_UNAVAILABLE_HOURS.includes(hours);
+
+  const resultBox = document.getElementById('cc-result');
+
+  if (isDiscountUnavailable) {
+    resultBox.innerHTML = `
+      <p class="result-label">DHJ Voucher Quote</p>
+      <div class="result-row"><span>First cleaning</span><span>${hours} hrs</span></div>
+      <div class="result-row"><span>Regular price (national avg)</span><span>$${nationalAvg.toFixed(2)}</span></div>
+      <div class="result-row total"><span>Voucher price (first cleaning)</span><span>$${voucherPrice.toFixed(2)}</span></div>
+      <div class="result-row"><span>ETF if cancelled early ($35/hr)</span><span>$${etf.toFixed(2)}</span></div>
+      <p class="result-placeholder" style="margin-top:10px;">The $57.75/hr discounted rate isn't available at ${hours} hrs — recommend 3 hrs or more for future cleanings, or quote a different duration.</p>
+    `;
+    return;
+  }
+
   const perVisitDiscounted = hours * DISCOUNTED_RATE;
   const monthlyCleaningCost = perVisitDiscounted * frequency;
   const monthlyTotal = monthlyCleaningCost + membershipFee;
-  const etf = hours * ETF_RATE;
 
-  const resultBox = document.getElementById('cc-result');
   resultBox.innerHTML = `
     <p class="result-label">DHJ Voucher Quote</p>
     <div class="result-row"><span>First cleaning</span><span>${hours} hrs</span></div>
@@ -140,21 +158,36 @@ document.getElementById('etf-calculate').addEventListener('click', () => {
 document.getElementById('ot-calculate').addEventListener('click', () => {
   const hours = parseFloat(document.getElementById('ot-hours').value) || 0;
 
-  const oneTimeTotal = hours * ONE_TIME_RATE;
+  const regularTotal = hours * ONE_TIME_RATE;
   const trialTotal = hours * TRIAL_RATE;
+  const discountedTotal = hours * DISCOUNTED_RATE;
+  const discountAvailable = !DISCOUNTED_UNAVAILABLE_HOURS.includes(hours);
 
   const resultBox = document.getElementById('ot-result');
-  resultBox.innerHTML = `
+  let html = `
     <p class="result-label">Options for ${hours.toFixed(2)} hrs</p>
     <div class="ot-option">
-      <span class="ot-label">One-Time Cleaning — $${ONE_TIME_RATE.toFixed(2)}/hr</span>
-      <span class="ot-price">$${oneTimeTotal.toFixed(2)}</span>
-    </div>
-    <div class="ot-option">
-      <span class="ot-label">Trial Cleaning — $${TRIAL_RATE.toFixed(2)}/hr</span>
+      <span class="ot-label">Trial Cleaning — $${TRIAL_RATE.toFixed(2)}/hr (30-day trial)</span>
       <span class="ot-price">$${trialTotal.toFixed(2)}</span>
     </div>
+    <div class="ot-option">
+      <span class="ot-label">Regular Cleaning — $${ONE_TIME_RATE.toFixed(2)}/hr (no commitment)</span>
+      <span class="ot-price">$${regularTotal.toFixed(2)}</span>
+    </div>
   `;
+
+  if (discountAvailable) {
+    html += `
+    <div class="ot-option">
+      <span class="ot-label">Regular Cleaning, Discounted — $${DISCOUNTED_RATE.toFixed(2)}/hr</span>
+      <span class="ot-price">$${discountedTotal.toFixed(2)}</span>
+    </div>
+    `;
+  } else {
+    html += `<p class="result-placeholder" style="margin-top:8px;">Discounted rate ($${DISCOUNTED_RATE.toFixed(2)}/hr) not available at ${hours} hrs — minimum 3 hrs.</p>`;
+  }
+
+  resultBox.innerHTML = html;
 });
 
 // ---------- Negotiation Calculator ----------
