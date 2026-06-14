@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Phoenix Sales Script Guide</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- Login screen -->
+<div class="admin-login" id="loginScreen">
+  <div class="admin-login-card">
+    <h1>Admin sign in</h1>
+    <p class="hint">Enter the password to edit scripts, tabs, and calculator rates.</p>
+    <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
+    <button class="calc-btn" id="loginBtn">Sign in</button>
+    <p class="login-error" id="loginError"></p>
+    <a href="/" class="back-link">&larr; Back to live site</a>
+  </div>
+</div>
+
+<!-- Admin dashboard -->
+<div class="admin-dashboard" id="dashboard" hidden>
+  <header class="admin-topbar">
+    <h1>Phoenix admin</h1>
+    <div class="admin-topbar-actions">
+      <a href="/" target="_blank" class="admin-link">View live site &#8599;</a>
+      <span class="save-status" id="saveStatus"></span>
+      <button class="calc-btn admin-btn-save" id="saveBtn">Save &amp; publish live</button>
+      <button class="admin-btn-secondary" id="resetBtn">Reset to defaults</button>
+      <button class="admin-btn-secondary" id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <nav class="admin-section-nav">
+    <button class="admin-section-tab active" data-section="tabs">Tabs &amp; Scripts</button>
+    <button class="admin-section-tab" data-section="rates">Calculator Rates</button>
+    <button class="admin-section-tab" data-section="toolbar">Footer Buttons</button>
+  </nav>
+
+  <main class="admin-main">
+
+    <!-- TABS & SCRIPTS -->
+    <section class="admin-section active" id="section-tabs">
+      <p class="hint">Edit the label, title, and script content for each tab. Content supports basic HTML (e.g. <code>&lt;strong&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;ul&gt;&lt;li&gt;</code>, <code>&lt;div class="script-block"&gt;</code>).</p>
+      <div id="tabsList"></div>
+      <button class="admin-btn-secondary" id="addTabBtn">+ Add new tab</button>
+    </section>
+
+    <!-- CALCULATOR RATES -->
+    <section class="admin-section" id="section-rates">
+      <p class="hint">Global rates used across all calculators on the live site.</p>
+
+      <div class="admin-grid">
+        <div class="form-row">
+          <label>ETF rate ($/hr)</label>
+          <input type="number" step="0.01" id="rate-etf">
+        </div>
+        <div class="form-row">
+          <label>Discounted rate ($/hr)</label>
+          <input type="number" step="0.01" id="rate-discounted">
+        </div>
+        <div class="form-row">
+          <label>One-time / regular rate ($/hr)</label>
+          <input type="number" step="0.01" id="rate-onetime">
+        </div>
+        <div class="form-row">
+          <label>Trial rate ($/hr)</label>
+          <input type="number" step="0.01" id="rate-trial">
+        </div>
+        <div class="form-row">
+          <label>Discounted-rate unavailable hours (comma-separated)</label>
+          <input type="text" id="rate-unavailable">
+        </div>
+      </div>
+
+      <h3 class="admin-h3">DHJ voucher pricing (hours : voucher price)</h3>
+      <div id="vouchersList"></div>
+      <button class="admin-btn-secondary" id="addVoucherBtn">+ Add hours tier</button>
+
+      <h3 class="admin-h3">National average reference pricing (hours : price)</h3>
+      <div id="nationalAvgList"></div>
+      <button class="admin-btn-secondary" id="addNationalAvgBtn">+ Add hours tier</button>
+
+      <h3 class="admin-h3">Membership fee options ($/mo)</h3>
+      <div id="membershipFeesList"></div>
+      <button class="admin-btn-secondary" id="addMembershipFeeBtn">+ Add fee</button>
+
+      <h3 class="admin-h3">Frequency options (visits / month)</h3>
+      <div id="frequenciesList"></div>
+      <button class="admin-btn-secondary" id="addFrequencyBtn">+ Add frequency</button>
+
+      <h3 class="admin-h3">Commitment terms (months)</h3>
+      <div id="commitmentTermsList"></div>
+      <button class="admin-btn-secondary" id="addCommitmentTermBtn">+ Add term</button>
+    </section>
+
+    <!-- FOOTER BUTTONS -->
+    <section class="admin-section" id="section-toolbar">
+      <p class="hint">Shortcut buttons on the floating toolbar (bottom-right of the live site).</p>
+      <div id="toolbarList"></div>
+      <button class="admin-btn-secondary" id="addToolbarBtn">+ Add footer button</button>
+    </section>
+
+  </main>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>
