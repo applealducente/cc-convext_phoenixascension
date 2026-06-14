@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homeaglow Sales Script Guide</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">HA</span>
+    <span class="brand-name">Sales Script Guide</span>
+  </div>
+  <button class="notes-btn" id="notesBtn" type="button">Notes</button>
+</header>
+
+<div class="layout">
+
+  <nav class="sidenav" id="sidenav">
+    <div class="nav-group-label">Phase 1: Opening</div>
+    <button class="nav-item active" data-target="opening">Opening Spiel</button>
+    <button class="nav-item" data-target="discovery">Discovery</button>
+    <button class="nav-item" data-target="elevator">Elevator Pitch</button>
+
+    <div class="nav-group-label">Phase 2: Data &amp; Pitch</div>
+    <button class="nav-item" data-target="data-gathering">Data Gathering</button>
+    <button class="nav-item" data-target="sales-pitch">Sales Pitch</button>
+
+    <div class="nav-group-label">Phase 3: Booking</div>
+    <button class="nav-item" data-target="booking">Booking</button>
+    <button class="nav-item" data-target="booking-proper">Booking Proper</button>
+
+    <div class="nav-group-label">Reference</div>
+    <button class="nav-item" data-target="verbatim">Verbatim</button>
+    <button class="nav-item" data-target="value-statements">Value Statements</button>
+    <button class="nav-item" data-target="objections">Common Objections</button>
+    <button class="nav-item" data-target="discovery-questions">Discovery Questions</button>
+    <button class="nav-item" data-target="faqs">FAQs</button>
+    <button class="nav-item" data-target="user-manual">User Manual</button>
+
+    <div class="nav-group-label">Tools</div>
+    <button class="nav-item tool-trigger" data-modal="cleaningModal">Cleaning Calculator</button>
+    <button class="nav-item tool-trigger" data-modal="etfModal">ETF Calculator</button>
+    <button class="nav-item tool-trigger" data-modal="oneTimeModal">One-Time Cleaning Calculator</button>
+    <button class="nav-item tool-trigger" data-modal="negotiationModal">Negotiation Calculator</button>
+  </nav>
+
+  <main class="content">
+
+    <section class="panel active" id="opening">
+      <h1>Opening Spiel</h1>
+      <p class="hint">What you say in the first 10 seconds. Confident, warm, and quick — get to the reason for the call before they decide to hang up.</p>
+      <div class="script-block">
+        <p>"Hi, is this <strong>[Customer Name]</strong>? Hi [Name], this is [Your Name] calling from Homeaglow — you signed up recently for a home cleaning, just calling to get that scheduled for you. Do you have a quick minute?"</p>
+      </div>
+      <div class="script-block alt">
+        <p><strong>If they sound rushed:</strong> "No problem at all — this'll take less than two minutes, I just need to confirm a few details about your home and get you on the calendar."</p>
+      </div>
+      <h3>Goals of this phase</h3>
+      <ul>
+        <li>Confirm identity and that they remember signing up</li>
+        <li>Set a low-pressure, helpful tone</li>
+        <li>Transition smoothly into Discovery</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="discovery">
+      <h1>Discovery</h1>
+      <p class="hint">Learn about the home and the customer's situation before pitching anything. This is where you gather the details the Cleaning Calculator needs.</p>
+      <div class="script-block">
+        <p>"To get you matched with the right cleaner and the right plan, can you tell me a bit about your place — how many bedrooms and bathrooms are we working with?"</p>
+      </div>
+      <div class="script-block">
+        <p>"And is there anything specific you're hoping to get taken care of — deep cleaning, certain rooms, pets in the home, anything like that?"</p>
+      </div>
+      <h3>What to capture</h3>
+      <ul>
+        <li>Bedrooms / bathrooms</li>
+        <li>Pets, allergies, special requests</li>
+        <li>Preferred days/times</li>
+        <li>Any areas needing extra attention (deep clean candidates)</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="elevator">
+      <h1>Elevator Pitch</h1>
+      <p class="hint">A 20-30 second summary of the value — used after Discovery, before diving into details.</p>
+      <div class="script-block">
+        <p>"Here's how it works: we match you with a vetted, background-checked cleaner who comes on a schedule that works for you. You're covered by our satisfaction guarantee, so if anything's ever not right, we make it right — no extra charge. Membership also includes [benefits], and you can pause or adjust anytime."</p>
+      </div>
+    </section>
+
+    <section class="panel" id="data-gathering">
+      <h1>Data Gathering</h1>
+      <p class="hint">Before quoting a price, confirm the details that drive the estimate.</p>
+      <div class="script-block">
+        <p>"Just to make sure I quote this accurately — does your home have any pets, how would you describe the current condition (lived-in, needs a deep clean, pretty tidy), and roughly what size is the space in square footage?"</p>
+      </div>
+      <h3>Checklist</h3>
+      <ul>
+        <li>Bedrooms &amp; bathrooms (for hour estimate)</li>
+        <li>Current condition of home</li>
+        <li>Pets / special surfaces</li>
+        <li>Preferred frequency (1x–4x per month)</li>
+        <li>Preferred hours / availability</li>
+      </ul>
+      <p class="hint">Use the <strong>Cleaning Calculator</strong> tool once you have these details to generate an estimate.</p>
+    </section>
+
+    <section class="panel" id="sales-pitch">
+      <h1>Sales Pitch</h1>
+      <p class="hint">Present the estimate and membership value clearly. Lead with the plan, then the price, then the guarantee.</p>
+      <div class="script-block">
+        <p>"Based on what you've told me, I'd recommend starting with [X] hours per visit, [frequency]x a month. With the $59/month membership, that comes out to about $[estimate] per visit. That membership also covers [benefits] — and every cleaning is backed by our happiness guarantee."</p>
+      </div>
+      <h3>Tips</h3>
+      <ul>
+        <li>Anchor on the monthly value, not just the per-visit cost</li>
+        <li>Mention the guarantee before they ask</li>
+        <li>Pause after stating the price — let them respond</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="booking">
+      <h1>Booking</h1>
+      <p class="hint">Move from "yes" to a scheduled appointment without friction.</p>
+      <div class="script-block">
+        <p>"Great — let's get this on the calendar. Looking at your preferred availability, I have [date/time options]. Which works best for you?"</p>
+      </div>
+      <div class="script-block alt">
+        <p><strong>If hesitant:</strong> "No commitment needed beyond the first cleaning — if it's not a fit, you can cancel anytime. Let's just get the first one scheduled so you can see how it goes."</p>
+      </div>
+    </section>
+
+    <section class="panel" id="booking-proper">
+      <h1>Booking Proper</h1>
+      <p class="hint">Confirming all details before ending the call.</p>
+      <div class="script-block">
+        <p>"Perfect — to confirm, I've got you booked for [date] at [time], for a [X]-hour cleaning. You'll get a confirmation by text/email with your cleaner's details. Is the address on file still [address]?"</p>
+      </div>
+      <h3>Before hanging up, confirm:</h3>
+      <ul>
+        <li>Date, time, and duration</li>
+        <li>Address and entry instructions</li>
+        <li>Payment method on file</li>
+        <li>Membership terms (frequency, fee, cancellation policy)</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="verbatim">
+      <h1>Verbatim</h1>
+      <p class="hint">Exact phrasing for sensitive or commonly mishandled moments.</p>
+      <div class="script-block">
+        <p><strong>Cancellation policy:</strong> "You're free to cancel or pause anytime through your account — there's no long-term lock-in on the standard plan."</p>
+      </div>
+      <div class="script-block">
+        <p><strong>Guarantee:</strong> "If you're ever not happy with a cleaning, let us know within 24 hours and we'll send someone back out to make it right, free of charge."</p>
+      </div>
+      <div class="script-block">
+        <p><strong>Payment:</strong> "You're only charged after each cleaning is completed — nothing is billed upfront."</p>
+      </div>
+    </section>
+
+    <section class="panel" id="value-statements">
+      <h1>Value Statements</h1>
+      <p class="hint">Reusable lines that reinforce why the service is worth it — drop these in naturally throughout the call.</p>
+      <ul class="value-list">
+        <li>"Every cleaner is background-checked and vetted before they're matched with customers."</li>
+        <li>"You get the same trusted cleaner whenever possible, so they learn your home and preferences."</li>
+        <li>"Membership pricing is lower than booking one-off cleanings every time."</li>
+        <li>"Our guarantee means you're never stuck with a cleaning you're not happy with."</li>
+        <li>"You're in control — adjust frequency, hours, or pause anytime from your account."</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="objections">
+      <h1>Common Objections</h1>
+      <p class="hint">Standard pushback and how to respond.</p>
+
+      <div class="objection">
+        <h3>"It's too expensive."</h3>
+        <p>"I understand — totally fair. A lot of customers feel that way at first, but when you break it down, it's about $[X] per hour, which is in line with hiring an independent cleaner, except you get the guarantee, vetting, and flexibility on top. Would it help if we adjusted the hours or frequency to fit your budget better?"</p>
+      </div>
+
+      <div class="objection">
+        <h3>"I want to think about it."</h3>
+        <p>"Of course — no pressure at all. Can I ask what's giving you pause, just so I can make sure you have everything you need to decide? [Address concern.] If it helps, we can book the first cleaning now with no obligation — you can always cancel before it happens if you change your mind."</p>
+      </div>
+
+      <div class="objection">
+        <h3>"I'm worried about a stranger in my home."</h3>
+        <p>"That's completely understandable, and it's something we take seriously. Every cleaner goes through a background check before they're matched with customers, and you'll get their name and profile ahead of time so you know exactly who's coming."</p>
+      </div>
+
+      <div class="objection">
+        <h3>"I already have a cleaner."</h3>
+        <p>"That's great that you have someone you trust! Out of curiosity, is there anything about your current setup you'd change if you could — pricing, reliability, flexibility? [Tailor pitch to gap.]"</p>
+      </div>
+
+      <div class="objection">
+        <h3>"I don't want a subscription / membership."</h3>
+        <p>"Totally get it — if a recurring plan isn't the right fit, we do have a one-time cleaning option as well. Want me to run those numbers for you instead?"</p>
+      </div>
+    </section>
+
+    <section class="panel" id="discovery-questions">
+      <h1>Discovery Questions</h1>
+      <p class="hint">Open-ended questions to understand needs and build rapport.</p>
+      <ul class="value-list">
+        <li>"What made you decide to look into a cleaning service?"</li>
+        <li>"Have you used a cleaning service before? What did you like or not like about it?"</li>
+        <li>"How would you describe the day-to-day in your home — busy household, pets, kids?"</li>
+        <li>"Are there any areas of the home that tend to need the most attention?"</li>
+        <li>"What does your ideal cleaning schedule look like?"</li>
+        <li>"Is there anything that would make this an easy yes for you today?"</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="faqs">
+      <h1>FAQs</h1>
+
+      <div class="faq">
+        <h3>How is pricing determined?</h3>
+        <p>Pricing is based on the number of hours needed per cleaning, which depends on home size, condition, and frequency selected. Membership fee is a flat monthly add-on.</p>
+      </div>
+
+      <div class="faq">
+        <h3>Can the customer change their schedule later?</h3>
+        <p>Yes — frequency, hours, and timing can all be adjusted from the account after the first cleaning.</p>
+      </div>
+
+      <div class="faq">
+        <h3>What happens if they cancel early?</h3>
+        <p>Depending on the cohort/plan, an Early Termination Fee (ETF) may apply if cancelling before the minimum commitment is met. Use the ETF Calculator to estimate this.</p>
+      </div>
+
+      <div class="faq">
+        <h3>Do they need to be home during the cleaning?</h3>
+        <p>No — many customers provide entry instructions (lockbox, code, key) and aren't home during the visit.</p>
+      </div>
+
+      <div class="faq">
+        <h3>What's included in the membership fee?</h3>
+        <p>The membership fee covers account management, the satisfaction guarantee, rebooking support, and access to the cleaner network — it's separate from the per-visit cleaning cost.</p>
+      </div>
+    </section>
+
+    <section class="panel" id="user-manual">
+      <h1>User Manual</h1>
+      <p class="hint">How to use this guide and the calculators during a live call.</p>
+      <ol class="manual-list">
+        <li>Start at <strong>Opening Spiel</strong> to greet the customer and confirm the reason for the call.</li>
+        <li>Move to <strong>Discovery</strong> and <strong>Data Gathering</strong> to collect home details (bedrooms, bathrooms, condition, frequency).</li>
+        <li>Open the <strong>Cleaning Calculator</strong> to generate a price estimate based on those details.</li>
+        <li>Use <strong>Sales Pitch</strong> language to present the estimate and membership value.</li>
+        <li>If they push back, refer to <strong>Common Objections</strong> for response scripts.</li>
+        <li>If they ask about cancelling early, use the <strong>ETF Calculator</strong>.</li>
+        <li>If they want a single cleaning instead of membership, use the <strong>One-Time Cleaning Calculator</strong>.</li>
+        <li>If they want a lower price to commit, use the <strong>Negotiation Calculator</strong> to model a discounted term.</li>
+        <li>Once they agree, move to <strong>Booking</strong> and <strong>Booking Proper</strong> to confirm and close.</li>
+        <li>Jot any call-specific details in <strong>Notes</strong> (top right) — these stay on your device only.</li>
+      </ol>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== MODALS ===================== -->
+
+<!-- Cleaning Calculator -->
+<div class="modal-overlay" id="cleaningModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>Cleaning Calculator</h2>
+    <h3 class="modal-sub">Home Details</h3>
+
+    <div class="form-row">
+      <label for="cc-bedrooms">Bedrooms</label>
+      <input type="number" id="cc-bedrooms" min="0" value="2">
+    </div>
+
+    <div class="form-row">
+      <label for="cc-bathrooms">Bathrooms</label>
+      <input type="number" id="cc-bathrooms" min="0" value="1" step="0.5">
+    </div>
+
+    <div class="form-row">
+      <label for="cc-preferred-hours">Customer's Preferred Hours (optional)</label>
+      <input type="number" id="cc-preferred-hours" min="0" step="0.5" placeholder="Leave blank to use estimate">
+    </div>
+
+    <div class="form-row">
+      <label for="cc-premium-hours">Premium Hours (deep clean / extras)</label>
+      <input type="number" id="cc-premium-hours" min="0" step="0.5" value="0">
+    </div>
+
+    <div class="form-row">
+      <label for="cc-frequency">Frequency (times per month)</label>
+      <select id="cc-frequency">
+        <option value="1">1x / month</option>
+        <option value="2">2x / month</option>
+        <option value="3">3x / month</option>
+        <option value="4" selected>4x / month</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="cc-membership-fee">Membership Fee</label>
+      <select id="cc-membership-fee">
+        <option value="59" selected>$59/mo</option>
+        <option value="49">$49/mo</option>
+        <option value="39">$39/mo</option>
+      </select>
+    </div>
+
+    <button class="calc-btn" id="cc-calculate">Calculate Estimate</button>
+
+    <div class="result-box" id="cc-result">
+      <p class="result-placeholder">Enter home details and calculate to see an estimate.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ETF Calculator -->
+<div class="modal-overlay" id="etfModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>ETF Calculator</h2>
+    <h3 class="modal-sub">Early Termination Fee Calculation</h3>
+
+    <div class="form-row">
+      <label for="etf-cohort">Select Cohort</label>
+      <select id="etf-cohort">
+        <option value="35" data-mf="59" selected>Cohort 3 ($59 MF, $35/hr ETF rate)</option>
+        <option value="30" data-mf="49">Cohort 2 ($49 MF, $30/hr ETF rate)</option>
+        <option value="25" data-mf="39">Cohort 1 ($39 MF, $25/hr ETF rate)</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="etf-hours">Initial Cleaning Hours</label>
+      <input type="number" id="etf-hours" min="0" step="0.5" value="3">
+    </div>
+
+    <button class="calc-btn" id="etf-calculate">Calculate ETF</button>
+
+    <div class="result-box" id="etf-result">
+      <p class="result-placeholder">Enter hours and select cohort to calculate.</p>
+    </div>
+  </div>
+</div>
+
+<!-- One-Time Cleaning Calculator -->
+<div class="modal-overlay" id="oneTimeModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>One-Time Cleaning Calculator</h2>
+    <h3 class="modal-sub">One-Time Cleaning Rates</h3>
+
+    <div class="form-row">
+      <label for="ot-hours">Hours for One-Time Cleaning</label>
+      <input type="number" id="ot-hours" min="1" step="0.5" value="3">
+    </div>
+
+    <button class="calc-btn" id="ot-calculate">Calculate One-Time Cleaning</button>
+
+    <div class="result-box" id="ot-result">
+      <p class="result-placeholder">Enter hours to see options.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Negotiation Calculator -->
+<div class="modal-overlay" id="negotiationModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>Negotiation Calculator</h2>
+    <h3 class="modal-sub">Negotiated Membership Price</h3>
+
+    <div class="form-row">
+      <label for="neg-current-plan">Current Membership Plan</label>
+      <select id="neg-current-plan">
+        <option value="59" selected>$59/mo Plan</option>
+        <option value="49">$49/mo Plan</option>
+        <option value="39">$39/mo Plan</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="neg-price">Negotiated Monthly Price</label>
+      <input type="number" id="neg-price" min="0" step="1" placeholder="e.g. 39">
+    </div>
+
+    <div class="form-row">
+      <label for="neg-term">Contract Term</label>
+      <select id="neg-term">
+        <option value="6" selected>6 Months</option>
+        <option value="5">5 Months</option>
+        <option value="4">4 Months</option>
+      </select>
+    </div>
+
+    <button class="calc-btn" id="neg-calculate">Calculate Negotiation</button>
+
+    <div class="result-box" id="neg-result">
+      <p class="result-label">Negotiation Result</p>
+      <p class="result-total">Negotiated Total: <span id="neg-total">$0.00</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Notes -->
+<div class="modal-overlay" id="notesModal">
+  <div class="modal">
+    <button class="modal-close" data-close>&times;</button>
+    <h2>Notes</h2>
+    <p class="modal-sub-text">Jot down call notes. Saved to this device only.</p>
+    <textarea id="notesArea" placeholder="Type notes here..."></textarea>
+    <div class="notes-actions">
+      <span class="notes-status" id="notesStatus"></span>
+      <button class="calc-btn" id="notesSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
