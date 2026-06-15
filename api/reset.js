@@ -1,12 +1,12 @@
 // api/reset.js
-// POST: clears the KV-stored content, reverting the live site to the
-// bundled content.json (the version deployed from the repo).
+// POST: clears the KV-stored content, reverting the live site to
+// the bundled content.json (the version deployed from the repo).
 
-import { kv } from '@vercel/kv';
+const { kvDel, isConfigured } = require('./_kv');
 
 const CONTENT_KEY = 'phoenix-content-v1';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -22,11 +22,15 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Incorrect password.' });
   }
 
+  if (!isConfigured()) {
+    return res.status(500).json({ error: 'Storage is not connected to this project yet.' });
+  }
+
   try {
-    await kv.del(CONTENT_KEY);
+    await kvDel(CONTENT_KEY);
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('KV delete error:', err);
     return res.status(500).json({ error: 'Failed to reset content.' });
   }
-}
+};

@@ -2,21 +2,22 @@
 // GET: returns the current content (from KV if available, otherwise the bundled default)
 // POST: saves new content to KV (requires password)
 
-import { kv } from '@vercel/kv';
-import defaultContent from '../public/content.json';
+const { kvGet, kvSet, isConfigured } = require('./_kv');
+const defaultContent = require('../public/content.json');
 
 const CONTENT_KEY = 'phoenix-content-v1';
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method === 'GET') {
-    try {
-      const stored = await kv.get(CONTENT_KEY);
-      if (stored) {
-        return res.status(200).json(stored);
+    if (isConfigured()) {
+      try {
+        const stored = await kvGet(CONTENT_KEY);
+        if (stored) {
+          return res.status(200).json(stored);
+        }
+      } catch (err) {
+        console.error('KV read error:', err);
       }
-    } catch (err) {
-      // KV not configured or unreachable; fall back to default
-      console.error('KV read error:', err);
     }
     return res.status(200).json(defaultContent);
   }
@@ -37,14 +38,18 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid content payload.' });
     }
 
+    if (!isConfigured()) {
+      return res.status(500).json({ error: 'Storage is not connected to this project yet.' });
+    }
+
     try {
-      await kv.set(CONTENT_KEY, content);
+      await kvSet(CONTENT_KEY, content);
       return res.status(200).json({ ok: true });
     } catch (err) {
       console.error('KV write error:', err);
-      return res.status(500).json({ error: 'Failed to save content. Make sure Vercel KV is connected to this project.' });
+      return res.status(500).json({ error: 'Failed to save content. Make sure storage is connected to this project.' });
     }
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
-}
+};

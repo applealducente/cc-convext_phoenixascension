@@ -1,10 +1,7 @@
 // api/login.js
 // POST: checks the admin password, returns ok if correct.
-// Does not issue a session token; the admin page re-sends the password with each save.
-// This keeps things simple for a small internal tool, but means the password
-// travels with each save request over HTTPS.
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -21,4 +18,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(200).json({ ok: true });
-}
+};
