@@ -5,26 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phoenix Sales Script Guide</title>
 <link rel="stylesheet" href="styles.css">
-<style>
-  /* Logo sizing — kept here so it always applies, even if styles.css is cached */
-  .brand { display: flex; align-items: center; gap: 12px; }
-  .brand-logo-img { height: 46px; width: auto; display: block; flex-shrink: 0; }
-  @media (max-width: 860px) {
-    .brand-logo-img { height: 34px; }
-    .topbar .page-title { display: none; }
-  }
-</style>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="brand">
-    <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-    <img class="brand-logo-img" src="phoenix-logo.png" alt="Phoenix Ascension — Powered by ConvEx">
-  </div>
+  <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
   <h1 class="page-title" id="pageTitle">Loading...</h1>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search scripts...">
+    <div class="search-results" id="searchResults"></div>
+  </div>
   <a class="admin-btn" id="adminBtn" href="/admin.html">Admin</a>
 </header>
 

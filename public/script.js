@@ -14,6 +14,7 @@ async function loadContent() {
   renderToolbar();
   populateCalculatorOptions();
   setupNotesAndModals();
+  setupSearch();
 }
 
 function renderTabs() {
@@ -24,12 +25,27 @@ function renderTabs() {
   tabnav.innerHTML = '';
   content.innerHTML = '';
 
+  const LOCK_TARGET_ID = 'sales-pitch';
+  const LOCK_GATE_ID = 'discovery';
+  let discoveryDone = sessionStorage.getItem('phoenix-discovery-done') === 'true';
+
   CONTENT.tabs.forEach((tab, index) => {
     const btn = document.createElement('button');
     btn.className = 'tab' + (index === 0 ? ' active' : '');
     btn.dataset.target = tab.id;
     btn.textContent = tab.label;
+
+    const isLockedTab = tab.id === LOCK_TARGET_ID;
+    if (isLockedTab && !discoveryDone) {
+      btn.classList.add('tab-locked');
+      btn.title = 'Complete Discovery first';
+    }
+
     btn.addEventListener('click', () => {
+      if (btn.classList.contains('tab-locked')) {
+        flashLockNotice();
+        return;
+      }
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
@@ -43,12 +59,155 @@ function renderTabs() {
     section.className = 'panel' + (index === 0 ? ' active' : '');
     section.id = 'panel-' + tab.id;
     section.innerHTML = `<h1>${tab.title}</h1>${tab.html}`;
+
+    if (tab.id === LOCK_GATE_ID) {
+      const gateBox = document.createElement('div');
+      gateBox.className = 'discovery-gate';
+      gateBox.id = 'discoveryGate';
+      gateBox.innerHTML = discoveryDone
+        ? `<p class="discovery-gate-done">&#10003; Discovery confirmed. Sales Pitch is unlocked.</p>`
+        : `<p class="discovery-gate-text">Before moving to Sales Pitch, confirm you've gone through the discovery questions with this lead.</p>
+           <button class="calc-btn discovery-gate-btn" id="discoveryDoneBtn" type="button">I've completed Discovery</button>`;
+      section.appendChild(gateBox);
+    }
+
     content.appendChild(section);
   });
+
+  // Wire up the "I've completed Discovery" button
+  const doneBtn = document.getElementById('discoveryDoneBtn');
+  if (doneBtn) {
+    doneBtn.addEventListener('click', () => {
+      sessionStorage.setItem('phoenix-discovery-done', 'true');
+      const salesTabBtn = document.querySelector(`.tab[data-target="${LOCK_TARGET_ID}"]`);
+      if (salesTabBtn) {
+        salesTabBtn.classList.remove('tab-locked');
+        salesTabBtn.title = '';
+      }
+      const gateBox = document.getElementById('discoveryGate');
+      if (gateBox) {
+        gateBox.innerHTML = `<p class="discovery-gate-done">&#10003; Discovery confirmed. Sales Pitch is unlocked.</p>`;
+      }
+    });
+  }
 
   if (CONTENT.tabs.length > 0) {
     pageTitle.textContent = CONTENT.tabs[0].label;
   }
+}
+
+function flashLockNotice() {
+  const existing = document.getElementById('lockNotice');
+  if (existing) existing.remove();
+
+  const notice = document.createElement('div');
+  notice.id = 'lockNotice';
+  notice.className = 'lock-notice';
+  notice.textContent = 'Complete Discovery first to unlock Sales Pitch.';
+  document.body.appendChild(notice);
+
+  setTimeout(() => {
+    notice.classList.add('lock-notice-out');
+    setTimeout(() => notice.remove(), 300);
+  }, 2200);
+}
+
+// ---------- Search ----------
+function setupSearch() {
+  const input = document.getElementById('searchInput');
+  const results = document.getElementById('searchResults');
+
+  if (!input || !results) return;
+
+  input.addEventListener('input', () => {
+    const query = input.value.trim().toLowerCase();
+
+    if (query.length < 2) {
+      results.classList.remove('open');
+      results.innerHTML = '';
+      return;
+    }
+
+    const matches = [];
+
+    CONTENT.tabs.forEach(tab => {
+      const plainText = tab.html.replace(/<[^>]*>/g, ' ');
+      const haystacks = [
+        { text: tab.title, isTitle: true },
+        { text: plainText, isTitle: false },
+      ];
+
+      haystacks.forEach(h => {
+        const lower = h.text.toLowerCase();
+        const idx = lower.indexOf(query);
+        if (idx !== -1 && matches.filter(m => m.tabId === tab.id).length < 2) {
+          const start = Math.max(0, idx - 40);
+          const end = Math.min(h.text.length, idx + query.length + 40);
+          let snippet = h.text.slice(start, end).trim().replace(/\s+/g, ' ');
+          if (start > 0) snippet = '...' + snippet;
+          if (end < h.text.length) snippet = snippet + '...';
+
+          matches.push({
+            tabId: tab.id,
+            tabLabel: tab.label,
+            snippet,
+            query,
+          });
+        }
+      });
+    });
+
+    renderSearchResults(matches.slice(0, 8), query);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) {
+      results.classList.remove('open');
+    }
+  });
+}
+
+function renderSearchResults(matches, query) {
+  const results = document.getElementById('searchResults');
+
+  if (matches.length === 0) {
+    results.innerHTML = '<div class="search-no-results">No matches found.</div>';
+    results.classList.add('open');
+    return;
+  }
+
+  results.innerHTML = '';
+  matches.forEach(m => {
+    const item = document.createElement('div');
+    item.className = 'search-result-item';
+
+    const escapedSnippet = m.snippet
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    const re = new RegExp(escapeRegExp(m.query), 'ig');
+    const highlighted = escapedSnippet.replace(re, (match) => `<mark>${match}</mark>`);
+
+    item.innerHTML = `
+      <span class="search-result-tab">${m.tabLabel}</span>
+      <span class="search-result-snippet">${highlighted}</span>
+    `;
+
+    item.addEventListener('click', () => {
+      const tabBtn = document.querySelector(`.tab[data-target="${m.tabId}"]`);
+      if (tabBtn) tabBtn.click();
+      results.classList.remove('open');
+      document.getElementById('searchInput').value = '';
+    });
+
+    results.appendChild(item);
+  });
+
+  results.classList.add('open');
+}
+
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function renderToolbar() {
