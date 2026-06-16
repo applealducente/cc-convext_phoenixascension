@@ -247,33 +247,6 @@ body::before {
   font-size: 11px;
 }
 
-.discovery-gate {
-  margin-top: 24px;
-  padding: 16px 18px;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  background: var(--accent-soft);
-}
-
-.discovery-gate-text {
-  margin: 0 0 12px;
-  font-size: 14px;
-  color: var(--ink);
-}
-
-.discovery-gate-btn {
-  width: auto;
-  margin-top: 0;
-  padding: 9px 18px;
-}
-
-.discovery-gate-done {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--accent-strong);
-}
-
 .lock-notice {
   position: fixed;
   bottom: 30px;
@@ -293,6 +266,78 @@ body::before {
 
 .lock-notice-out {
   opacity: 0;
+}
+
+.discovery-float-bar {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 14px 20px;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.discovery-float-bar.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.discovery-float-text {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.discovery-float-btn {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.discovery-float-btn:hover {
+  filter: brightness(1.05);
+}
+
+.discovery-float-done {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
+@media (max-width: 600px) {
+  .discovery-float-bar {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    transform: translateY(20px);
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .discovery-float-bar.visible {
+    transform: translateY(0);
+  }
 }
 
 /* ---------- Page wrap & content ---------- */

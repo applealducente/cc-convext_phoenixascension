@@ -59,40 +59,63 @@ function renderTabs() {
     section.className = 'panel' + (index === 0 ? ' active' : '');
     section.id = 'panel-' + tab.id;
     section.innerHTML = `<h1>${tab.title}</h1>${tab.html}`;
-
-    if (tab.id === LOCK_GATE_ID) {
-      const gateBox = document.createElement('div');
-      gateBox.className = 'discovery-gate';
-      gateBox.id = 'discoveryGate';
-      gateBox.innerHTML = discoveryDone
-        ? `<p class="discovery-gate-done">&#10003; Discovery confirmed. Sales Pitch is unlocked.</p>`
-        : `<p class="discovery-gate-text">Before moving to Sales Pitch, confirm you've gone through the discovery questions with this lead.</p>
-           <button class="calc-btn discovery-gate-btn" id="discoveryDoneBtn" type="button">I've completed Discovery</button>`;
-      section.appendChild(gateBox);
-    }
-
     content.appendChild(section);
   });
 
-  // Wire up the "I've completed Discovery" button
+  setupDiscoveryFloatingGate(discoveryDone, LOCK_GATE_ID, LOCK_TARGET_ID);
+
+  if (CONTENT.tabs.length > 0) {
+    pageTitle.textContent = CONTENT.tabs[0].label;
+  }
+}
+
+function setupDiscoveryFloatingGate(discoveryDoneInitial, gateTabId, targetTabId) {
+  let discoveryDone = discoveryDoneInitial;
+
+  // Remove any existing floating bar before re-creating it (renderTabs can run more than once)
+  const existingBar = document.getElementById('discoveryFloatBar');
+  if (existingBar) existingBar.remove();
+
+  const bar = document.createElement('div');
+  bar.id = 'discoveryFloatBar';
+  bar.className = 'discovery-float-bar';
+  bar.innerHTML = discoveryDone
+    ? `<span class="discovery-float-done">&#10003; Discovery confirmed, Sales Pitch unlocked</span>`
+    : `<span class="discovery-float-text">Finished asking discovery questions?</span>
+       <button class="discovery-float-btn" id="discoveryDoneBtn" type="button">I've completed Discovery</button>`;
+  document.body.appendChild(bar);
+
+  function updateBarVisibility() {
+    const activeTab = document.querySelector('.tab.active');
+    const onGateTab = activeTab && activeTab.dataset.target === gateTabId;
+    bar.classList.toggle('visible', Boolean(onGateTab) && !discoveryDone);
+  }
+
+  // Show/hide whenever any tab is clicked
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', updateBarVisibility);
+  });
+
+  updateBarVisibility();
+
   const doneBtn = document.getElementById('discoveryDoneBtn');
   if (doneBtn) {
     doneBtn.addEventListener('click', () => {
+      discoveryDone = true;
       sessionStorage.setItem('phoenix-discovery-done', 'true');
-      const salesTabBtn = document.querySelector(`.tab[data-target="${LOCK_TARGET_ID}"]`);
+
+      // Unlock only the Sales Pitch tab, nothing else
+      const salesTabBtn = document.querySelector(`.tab[data-target="${targetTabId}"]`);
       if (salesTabBtn) {
         salesTabBtn.classList.remove('tab-locked');
         salesTabBtn.title = '';
       }
-      const gateBox = document.getElementById('discoveryGate');
-      if (gateBox) {
-        gateBox.innerHTML = `<p class="discovery-gate-done">&#10003; Discovery confirmed. Sales Pitch is unlocked.</p>`;
-      }
-    });
-  }
 
-  if (CONTENT.tabs.length > 0) {
-    pageTitle.textContent = CONTENT.tabs[0].label;
+      bar.innerHTML = `<span class="discovery-float-done">&#10003; Discovery confirmed, Sales Pitch unlocked</span>`;
+      setTimeout(() => {
+        bar.classList.remove('visible');
+      }, 1800);
+    });
   }
 }
 
