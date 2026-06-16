@@ -654,3 +654,17 @@ body::before {
     animation: none;
   }
 }
+.objection {
+    background: #f8eef1;
+    border: 1px solid #e6d2d9;
+    border-left: 5px solid #c98aa0;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.objection h3 {
+    margin-top: 0;
+    color: #6f3c50;
+}
