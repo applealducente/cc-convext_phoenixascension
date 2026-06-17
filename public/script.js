@@ -238,9 +238,10 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-// Panels that become click-to-reveal accordions (full-width Q&A) and tile grids.
-const ACCORDION_PANEL_IDS = ['panel-onset-objections', 'panel-objections', 'panel-faqs'];
-const TILE_PANEL_IDS = ['panel-value-statements'];
+// Panels that become click-to-reveal tile grids.
+const TILE_PANEL_IDS = ['panel-value-statements', 'panel-onset-objections', 'panel-objections', 'panel-faqs'];
+// Panels that become full-width click-to-reveal accordions (none right now).
+const ACCORDION_PANEL_IDS = [];
 
 // Pull a title + body out of one item container, regardless of how it's marked up.
 function extractItem(el) {
@@ -331,6 +332,8 @@ function buildAccordionItem(item) {
 function buildTiles(panel, items) {
   const grid = document.createElement('div');
   grid.className = 'value-tiles';
+  // Objections and FAQs have longer titles, so give them wider tiles (fewer per row).
+  if (panel.id !== 'panel-value-statements') grid.classList.add('tiles-wide');
 
   items.forEach(item => {
     const tile = document.createElement('div');

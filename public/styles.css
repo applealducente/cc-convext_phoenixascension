@@ -657,6 +657,32 @@ body::before {
   }
 }
 
+/* Wider tiles for longer titles (objections, FAQs) */
+.value-tiles.tiles-wide {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.value-tiles.tiles-wide .accordion-title {
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.value-tiles.tiles-wide .value-tile .accordion-trigger {
+  padding: 18px 18px;
+  min-height: 76px;
+}
+
+.value-tiles.tiles-wide .value-tile.open .accordion-trigger {
+  padding: 14px 16px;
+  min-height: 0;
+}
+
+@media (max-width: 600px) {
+  .value-tiles.tiles-wide {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* ---------- Modals ---------- */
 
