@@ -59,10 +59,27 @@ body::before {
 .topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
   padding: 18px 24px;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
+}
+
+.topbar-left,
+.topbar-right {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.topbar-left {
+  justify-content: flex-start;
+}
+
+.topbar-right {
+  justify-content: flex-end;
+  gap: 14px;
 }
 
 .logo-link {
@@ -72,8 +89,8 @@ body::before {
 }
 
 .logo-img {
-  height: 32px;
-  max-width: 140px;
+  height: 38px;
+  max-width: 190px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -86,12 +103,15 @@ body::before {
   letter-spacing: 0.01em;
   margin: 0;
   text-align: center;
-  flex: 1;
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .search-wrap {
   position: relative;
-  margin-right: 14px;
 }
 
 .search-input {
@@ -472,6 +492,82 @@ body::before {
 
 .manual-list {
   counter-reset: step;
+}
+
+/* ---------- Accordions (objections, FAQs, value anchors) ---------- */
+
+.accordion-item .accordion-body {
+  display: none;
+}
+
+.accordion-item.open .accordion-body {
+  display: block;
+  animation: fadeIn 0.16s ease;
+}
+
+.accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.accordion-trigger:hover {
+  color: var(--accent-strong);
+}
+
+.accordion-trigger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.accordion-chevron {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--accent-strong);
+  transition: transform 0.18s ease;
+}
+
+.accordion-item.open .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* Objection / FAQ: the h3 question is the trigger */
+.objection h3.accordion-trigger,
+.faq h3.accordion-trigger {
+  margin: 0;
+}
+
+.objection.accordion-item .accordion-body,
+.faq.accordion-item .accordion-body {
+  margin-top: 8px;
+}
+
+/* Value anchors: collapse the quote behind a short preview */
+.value-list .value-item {
+  padding: 0;
+  overflow: hidden;
+}
+
+.value-list .value-item .accordion-trigger {
+  padding: 12px 14px;
+}
+
+.value-preview {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.value-list .value-item .accordion-body {
+  padding: 0 14px 13px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink);
 }
 
 /* ---------- Modals ---------- */

@@ -1,6 +1,59 @@
 // ---------- Load content and render the page ----------
 let CONTENT = null;
 
+// ---------- Lock chain state ----------
+// In-memory only: every page load/refresh starts locked again.
+// Each confirmation also carries a timestamp and lapses after 30 minutes,
+// so a long call without a refresh will still re-lock the chain.
+const LOCK_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
+const LOCK_STAGES = [
+  { gate: 'discovery', doneKey: 'phoenix-discovery-done', unlocks: ['sales-pitch'] },
+  { gate: 'sales-pitch', doneKey: 'phoenix-salespitch-done', unlocks: ['booking', 'booking-proper'] },
+];
+const VERBATIM_ID = 'verbatim';
+const VERBATIM_REQUIRES = ['phoenix-booking-done', 'phoenix-bookingproper-done'];
+
+// If an upstream step lapses, its downstream steps must be reconfirmed too.
+const LOCK_DEPENDENTS = {
+  'phoenix-discovery-done': ['phoenix-salespitch-done', 'phoenix-booking-done', 'phoenix-bookingproper-done'],
+  'phoenix-salespitch-done': ['phoenix-booking-done', 'phoenix-bookingproper-done'],
+};
+
+// key -> timestamp (ms) when confirmed. Plain JS object, so it resets on every load.
+const unlockTimes = {};
+
+function markDone(key) { unlockTimes[key] = Date.now(); }
+
+function isDone(key) {
+  const t = unlockTimes[key];
+  if (!t) return false;
+  if (Date.now() - t >= LOCK_TTL_MS) { delete unlockTimes[key]; return false; }
+  return true;
+}
+
+function cascadeExpiry() {
+  // Drop downstream confirmations whenever their upstream step is no longer valid.
+  Object.keys(LOCK_DEPENDENTS).forEach(parent => {
+    if (!isDone(parent)) {
+      LOCK_DEPENDENTS[parent].forEach(dep => { delete unlockTimes[dep]; });
+    }
+  });
+}
+
+function lockedTabIds() {
+  cascadeExpiry();
+  const locked = new Set();
+  LOCK_STAGES.forEach(stage => {
+    if (!isDone(stage.doneKey)) stage.unlocks.forEach(id => locked.add(id));
+  });
+  if (!VERBATIM_REQUIRES.every(isDone)) locked.add(VERBATIM_ID);
+  return locked;
+}
+
+// Reassigned inside setupLockChainGates once the floating bars exist.
+let evaluateLocks = function () {};
+
 async function loadContent() {
   try {
     const res = await fetch('/api/content');
@@ -24,35 +77,6 @@ function renderTabs() {
 
   tabnav.innerHTML = '';
   content.innerHTML = '';
-
-  // Lock chain: each stage must be confirmed before its "unlocks" tabs become clickable.
-  // gate: the tab where the confirm button appears.
-  // doneKey: sessionStorage key tracking confirmation.
-  // unlocks: tab ids that stay locked until this stage is confirmed.
-  const LOCK_STAGES = [
-    { gate: 'discovery', doneKey: 'phoenix-discovery-done', unlocks: ['sales-pitch'] },
-    { gate: 'sales-pitch', doneKey: 'phoenix-salespitch-done', unlocks: ['booking', 'booking-proper'] },
-  ];
-  // Verbatim needs BOTH booking and booking-proper confirmed; handled separately below.
-  const VERBATIM_ID = 'verbatim';
-  const VERBATIM_REQUIRES = ['phoenix-booking-done', 'phoenix-bookingproper-done'];
-
-  function isDone(key) {
-    return sessionStorage.getItem(key) === 'true';
-  }
-
-  function lockedTabIds() {
-    const locked = new Set();
-    LOCK_STAGES.forEach(stage => {
-      if (!isDone(stage.doneKey)) {
-        stage.unlocks.forEach(id => locked.add(id));
-      }
-    });
-    if (!VERBATIM_REQUIRES.every(isDone)) {
-      locked.add(VERBATIM_ID);
-    }
-    return locked;
-  }
 
   const locked = lockedTabIds();
 
@@ -78,7 +102,7 @@ function renderTabs() {
       document.getElementById('panel-' + tab.id).classList.add('active');
       pageTitle.textContent = tab.label;
       window.scrollTo({ top: 0, behavior: 'instant' });
-      updateAllFloatingGates();
+      evaluateLocks();
     });
     tabnav.appendChild(btn);
 
@@ -86,17 +110,22 @@ function renderTabs() {
     section.className = 'panel' + (index === 0 ? ' active' : '');
     section.id = 'panel-' + tab.id;
     section.innerHTML = `<h1>${tab.title}</h1>${tab.html}`;
+    setupAccordions(section);
     content.appendChild(section);
   });
 
-  setupLockChainGates(LOCK_STAGES, VERBATIM_ID, VERBATIM_REQUIRES);
+  setupLockChainGates();
 
   if (CONTENT.tabs.length > 0) {
     pageTitle.textContent = CONTENT.tabs[0].label;
   }
+
+  // Re-check periodically so unlocks expire after 30 minutes without needing a refresh.
+  if (window.__lockTimer) clearInterval(window.__lockTimer);
+  window.__lockTimer = setInterval(evaluateLocks, 30000);
 }
 
-function setupLockChainGates(stages, verbatimId, verbatimRequires) {
+function setupLockChainGates() {
   // Remove any existing floating bars before re-creating (renderTabs can run more than once)
   document.querySelectorAll('.discovery-float-bar').forEach(el => el.remove());
 
@@ -107,115 +136,163 @@ function setupLockChainGates(stages, verbatimId, verbatimRequires) {
     'booking-proper': 'booking proper',
   };
 
-  const bars = [];
-
-  // One floating bar per lock stage (discovery -> sales-pitch, sales-pitch -> booking/booking-proper)
-  stages.forEach(stage => {
+  // One bar per gated step.
+  const stageBars = LOCK_STAGES.map(stage => {
     const bar = document.createElement('div');
     bar.className = 'discovery-float-bar';
     bar.dataset.gate = stage.gate;
     document.body.appendChild(bar);
-    bars.push({ stage, bar });
-    renderGateBarContent(bar, stage);
+    return { gate: stage.gate, doneKey: stage.doneKey, bar };
   });
 
-  // Special bars for booking and booking-proper, both feed into unlocking verbatim
+  // Booking + Booking Proper each feed into unlocking Verbatim.
   const verbatimGates = ['booking', 'booking-proper'];
-  const verbatimBars = [];
-  verbatimGates.forEach((gateId, i) => {
+  const verbatimBars = verbatimGates.map((gateId, i) => {
     const bar = document.createElement('div');
     bar.className = 'discovery-float-bar';
     bar.dataset.gate = gateId;
     bar.dataset.verbatimStep = 'true';
     document.body.appendChild(bar);
-    verbatimBars.push({ gateId, doneKey: verbatimRequires[i], bar });
-    renderVerbatimStepBarContent(bar, gateId, verbatimRequires[i], verbatimId, verbatimRequires);
+    return { gate: gateId, doneKey: VERBATIM_REQUIRES[i], bar };
   });
 
-  function renderGateBarContent(bar, stage) {
-    const done = sessionStorage.getItem(stage.doneKey) === 'true';
-    if (done) {
-      bar.innerHTML = `<span class="discovery-float-done">&#10003; Confirmed, next step unlocked</span>`;
+  const allBars = stageBars.concat(verbatimBars);
+
+  function renderBar(entry) {
+    if (isDone(entry.doneKey)) {
+      entry.bar.innerHTML = `<span class="discovery-float-done">&#10003; Confirmed</span>`;
       return;
     }
-    bar.innerHTML = `<span class="discovery-float-text">Finished with ${gateLabels[stage.gate] || stage.gate}?</span>
-       <button class="discovery-float-btn" type="button">I've completed this step</button>`;
-    bar.querySelector('button').addEventListener('click', () => {
-      sessionStorage.setItem(stage.doneKey, 'true');
-      stage.unlocks.forEach(id => {
-        const tabBtn = document.querySelector(`.tab[data-target="${id}"]`);
-        if (tabBtn && !isLockedByAnyStage(id)) {
-          tabBtn.classList.remove('tab-locked');
-          tabBtn.title = '';
-        }
-      });
-      bar.innerHTML = `<span class="discovery-float-done">&#10003; Confirmed, next step unlocked</span>`;
-      setTimeout(() => bar.classList.remove('visible'), 1800);
+    const label = gateLabels[entry.gate] || entry.gate;
+    entry.bar.innerHTML =
+      `<span class="discovery-float-text">Finished with ${label}?</span>` +
+      `<button class="discovery-float-btn" type="button">I've completed this step</button>`;
+    entry.bar.querySelector('button').addEventListener('click', () => {
+      markDone(entry.doneKey);
+      evaluateLocks();
+      // Collapse the bar shortly after confirming.
+      setTimeout(evaluateLocks, 1600);
     });
   }
 
-  function renderVerbatimStepBarContent(bar, gateId, doneKey, vId, vRequires) {
-    const done = sessionStorage.getItem(doneKey) === 'true';
-    if (done) {
-      bar.innerHTML = `<span class="discovery-float-done">&#10003; Confirmed</span>`;
-      return;
-    }
-    bar.innerHTML = `<span class="discovery-float-text">Finished with ${gateLabels[gateId] || gateId}?</span>
-       <button class="discovery-float-btn" type="button">Mark as complete</button>`;
-    bar.querySelector('button').addEventListener('click', () => {
-      sessionStorage.setItem(doneKey, 'true');
-      bar.innerHTML = `<span class="discovery-float-done">&#10003; Confirmed</span>`;
-      setTimeout(() => bar.classList.remove('visible'), 1500);
+  evaluateLocks = function () {
+    const locked = lockedTabIds();
 
-      if (vRequires.every(k => sessionStorage.getItem(k) === 'true')) {
-        const verbatimBtn = document.querySelector(`.tab[data-target="${vId}"]`);
-        if (verbatimBtn) {
-          verbatimBtn.classList.remove('tab-locked');
-          verbatimBtn.title = '';
-        }
+    // Sync tab lock styling.
+    CONTENT.tabs.forEach(tab => {
+      const tabBtn = document.querySelector(`.tab[data-target="${tab.id}"]`);
+      if (!tabBtn) return;
+      if (locked.has(tab.id)) {
+        tabBtn.classList.add('tab-locked');
+        tabBtn.title = 'Complete the previous step first';
+      } else {
+        tabBtn.classList.remove('tab-locked');
+        tabBtn.title = '';
       }
     });
-  }
 
-  function isLockedByAnyStage(tabId) {
-    // Used to avoid prematurely unlocking a tab that's also gated by another still-incomplete stage
-    return stages.some(s => s.unlocks.includes(tabId) && sessionStorage.getItem(s.doneKey) !== 'true');
-  }
+    // Re-render any bar whose confirmed/not-confirmed state changed (e.g. after expiry).
+    allBars.forEach(entry => {
+      const showsConfirmed = entry.bar.querySelector('.discovery-float-done') !== null;
+      if (showsConfirmed !== isDone(entry.doneKey)) renderBar(entry);
+    });
 
-  function updateVisibility() {
+    // Show a bar only while you're on its gate tab and it isn't yet confirmed.
     const activeTab = document.querySelector('.tab.active');
     const activeGate = activeTab ? activeTab.dataset.target : null;
-
-    bars.forEach(({ stage, bar }) => {
-      const done = sessionStorage.getItem(stage.doneKey) === 'true';
-      bar.classList.toggle('visible', activeGate === stage.gate && !done);
+    allBars.forEach(entry => {
+      entry.bar.classList.toggle('visible', activeGate === entry.gate && !isDone(entry.doneKey));
     });
 
-    verbatimBars.forEach(({ gateId, doneKey, bar }) => {
-      const done = sessionStorage.getItem(doneKey) === 'true';
-      bar.classList.toggle('visible', activeGate === gateId && !done);
-    });
-  }
+    // If the tab you're on just re-locked (30-min lapse), bounce back to the first tab.
+    if (activeTab && locked.has(activeTab.dataset.target)) {
+      const first = document.querySelector('.tab');
+      if (first) first.click();
+      flashLockNotice('That step locked again after 30 minutes \u2014 please reconfirm the earlier steps.');
+    }
+  };
 
-  window.updateAllFloatingGates = updateVisibility;
-  updateVisibility();
+  allBars.forEach(renderBar);
+  evaluateLocks();
 }
 
 
-function flashLockNotice() {
+function flashLockNotice(message) {
   const existing = document.getElementById('lockNotice');
   if (existing) existing.remove();
 
   const notice = document.createElement('div');
   notice.id = 'lockNotice';
   notice.className = 'lock-notice';
-  notice.textContent = 'Complete Discovery first to unlock Sales Pitch.';
+  notice.textContent = message || 'Complete the previous step first to unlock this tab.';
   document.body.appendChild(notice);
 
   setTimeout(() => {
     notice.classList.add('lock-notice-out');
     setTimeout(() => notice.remove(), 300);
   }, 2200);
+}
+
+// ---------- Accordions (objections, FAQs, value anchors) ----------
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function setupAccordions(panel) {
+  // Objections (onset + common) and FAQs: the question (h3) toggles its answer.
+  panel.querySelectorAll('.objection, .faq').forEach(item => {
+    const h3 = item.querySelector('h3');
+    if (!h3 || item.dataset.accordion === 'on') return;
+    item.dataset.accordion = 'on';
+
+    // Move everything after the heading into a collapsible body.
+    const body = document.createElement('div');
+    body.className = 'accordion-body';
+    let node = h3.nextSibling;
+    while (node) {
+      const next = node.nextSibling;
+      body.appendChild(node);
+      node = next;
+    }
+    item.appendChild(body);
+
+    item.classList.add('accordion-item');
+    h3.classList.add('accordion-trigger');
+    h3.setAttribute('role', 'button');
+    h3.setAttribute('tabindex', '0');
+    h3.insertAdjacentHTML('beforeend', '<span class="accordion-chevron" aria-hidden="true">\u25BE</span>');
+
+    const toggle = () => item.classList.toggle('open');
+    h3.addEventListener('click', toggle);
+    h3.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
+
+  // Value anchors: each statement collapses behind a short preview of itself.
+  panel.querySelectorAll('.value-list > li').forEach(li => {
+    if (li.dataset.accordion === 'on') return;
+    li.dataset.accordion = 'on';
+
+    const fullHtml = li.innerHTML;
+    const text = li.textContent.trim().replace(/\s+/g, ' ');
+    const preview = text.length > 64 ? text.slice(0, 64).trim() + '\u2026' : text;
+
+    li.innerHTML =
+      `<div class="accordion-trigger" role="button" tabindex="0">` +
+        `<span class="value-preview">${escapeHtml(preview)}</span>` +
+        `<span class="accordion-chevron" aria-hidden="true">\u25BE</span>` +
+      `</div>` +
+      `<div class="accordion-body">${fullHtml}</div>`;
+    li.classList.add('accordion-item', 'value-item');
+
+    const trigger = li.querySelector('.accordion-trigger');
+    const toggle = () => li.classList.toggle('open');
+    trigger.addEventListener('click', toggle);
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+    });
+  });
 }
 
 // ---------- Search ----------
@@ -302,6 +379,13 @@ function renderSearchResults(matches, query) {
     item.addEventListener('click', () => {
       const tabBtn = document.querySelector(`.tab[data-target="${m.tabId}"]`);
       if (tabBtn) tabBtn.click();
+      // Open any collapsed item in that tab that matches the search term.
+      const panel = document.getElementById('panel-' + m.tabId);
+      if (panel) {
+        panel.querySelectorAll('.accordion-item').forEach(acc => {
+          if (acc.textContent.toLowerCase().includes(m.query)) acc.classList.add('open');
+        });
+      }
       results.classList.remove('open');
       document.getElementById('searchInput').value = '';
     });
