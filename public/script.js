@@ -233,66 +233,143 @@ function flashLockNotice(message) {
   }, 2200);
 }
 
-// ---------- Accordions (objections, FAQs, value anchors) ----------
+// ---------- Accordions & tiles (objections, FAQs, value anchors) ----------
 function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function setupAccordions(panel) {
-  // Objections (onset + common) and FAQs: the question (h3) toggles its answer.
-  panel.querySelectorAll('.objection, .faq').forEach(item => {
-    const h3 = item.querySelector('h3');
-    if (!h3 || item.dataset.accordion === 'on') return;
-    item.dataset.accordion = 'on';
+// Panels that become click-to-reveal accordions (full-width Q&A) and tile grids.
+const ACCORDION_PANEL_IDS = ['panel-onset-objections', 'panel-objections', 'panel-faqs'];
+const TILE_PANEL_IDS = ['panel-value-statements'];
 
-    // Move everything after the heading into a collapsible body.
-    const body = document.createElement('div');
-    body.className = 'accordion-body';
-    let node = h3.nextSibling;
-    while (node) {
-      const next = node.nextSibling;
-      body.appendChild(node);
-      node = next;
+// Pull a title + body out of one item container, regardless of how it's marked up.
+function extractItem(el) {
+  const clone = el.cloneNode(true);
+  let titleEl = clone.querySelector('h2, h3, h4, h5, h6') || clone.querySelector('strong, b');
+  let titleHtml, bodyHtml;
+
+  if (titleEl) {
+    titleHtml = titleEl.innerHTML.trim();
+    titleEl.remove();
+    bodyHtml = clone.innerHTML.trim();
+  } else {
+    // No heading: use a short preview of the text as the label, full content as the body.
+    const text = clone.textContent.trim().replace(/\s+/g, ' ');
+    titleHtml = escapeHtml(text.length > 64 ? text.slice(0, 64).trim() + '\u2026' : text);
+    bodyHtml = clone.innerHTML.trim();
+  }
+  if (!bodyHtml) bodyHtml = '<p class="accordion-empty">(no additional detail)</p>';
+  return { el, titleHtml, bodyHtml };
+}
+
+// Find the repeating "items" inside a panel, trying several common structures.
+function collectItems(panel) {
+  // 1. Explicit value-list <li>
+  let nodes = Array.from(panel.querySelectorAll('.value-list > li'));
+  if (nodes.length) return nodes.map(extractItem);
+
+  // 2. Explicit .objection / .faq blocks
+  nodes = Array.from(panel.querySelectorAll('.objection, .faq'));
+  if (nodes.length) return nodes.map(extractItem);
+
+  // 3. Generic wrapper blocks: direct children that contain a heading or bold lead-in
+  nodes = Array.from(panel.children).filter(ch =>
+    ch.nodeType === 1 &&
+    ch.tagName !== 'H1' &&
+    !ch.classList.contains('hint') &&
+    (ch.querySelector('h2, h3, h4, h5, h6') || ch.querySelector('strong, b'))
+  );
+  if (nodes.length) return nodes.map(extractItem);
+
+  // 4. Flat pattern: headings sit directly in the panel; group each heading with the
+  //    content that follows it until the next heading.
+  const groups = [];
+  let current = null;
+  Array.from(panel.children).forEach(ch => {
+    if (ch.tagName === 'H1' || (ch.classList && ch.classList.contains('hint'))) return;
+    if (/^H[2-6]$/.test(ch.tagName)) {
+      current = { heading: ch, nodes: [] };
+      groups.push(current);
+    } else if (current) {
+      current.nodes.push(ch);
     }
-    item.appendChild(body);
-
-    item.classList.add('accordion-item');
-    h3.classList.add('accordion-trigger');
-    h3.setAttribute('role', 'button');
-    h3.setAttribute('tabindex', '0');
-    h3.insertAdjacentHTML('beforeend', '<span class="accordion-chevron" aria-hidden="true">\u25BE</span>');
-
-    const toggle = () => item.classList.toggle('open');
-    h3.addEventListener('click', toggle);
-    h3.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-    });
   });
+  if (groups.length) {
+    return groups.map(g => {
+      const wrap = document.createElement('div');
+      g.heading.parentNode.insertBefore(wrap, g.heading);
+      wrap.appendChild(g.heading);
+      g.nodes.forEach(n => wrap.appendChild(n));
+      return extractItem(wrap);
+    });
+  }
 
-  // Value anchors: each statement collapses behind a short preview of itself.
-  panel.querySelectorAll('.value-list > li').forEach(li => {
-    if (li.dataset.accordion === 'on') return;
-    li.dataset.accordion = 'on';
+  return [];
+}
 
-    const fullHtml = li.innerHTML;
-    const text = li.textContent.trim().replace(/\s+/g, ' ');
-    const preview = text.length > 64 ? text.slice(0, 64).trim() + '\u2026' : text;
+function attachToggle(container, trigger) {
+  const toggle = () => container.classList.toggle('open');
+  trigger.addEventListener('click', toggle);
+  trigger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+  });
+}
 
-    li.innerHTML =
+function buildAccordionItem(item) {
+  const el = item.el;
+  el.classList.add('accordion-item');
+  el.dataset.accordion = 'on';
+  el.innerHTML =
+    `<div class="accordion-trigger" role="button" tabindex="0">` +
+      `<span class="accordion-title">${item.titleHtml}</span>` +
+      `<span class="accordion-chevron" aria-hidden="true">\u25BE</span>` +
+    `</div>` +
+    `<div class="accordion-body">${item.bodyHtml}</div>`;
+  attachToggle(el, el.querySelector('.accordion-trigger'));
+}
+
+function buildTiles(panel, items) {
+  const grid = document.createElement('div');
+  grid.className = 'value-tiles';
+
+  items.forEach(item => {
+    const tile = document.createElement('div');
+    tile.className = 'value-tile accordion-item';
+    tile.innerHTML =
       `<div class="accordion-trigger" role="button" tabindex="0">` +
-        `<span class="value-preview">${escapeHtml(preview)}</span>` +
+        `<span class="accordion-title">${item.titleHtml}</span>` +
         `<span class="accordion-chevron" aria-hidden="true">\u25BE</span>` +
       `</div>` +
-      `<div class="accordion-body">${fullHtml}</div>`;
-    li.classList.add('accordion-item', 'value-item');
-
-    const trigger = li.querySelector('.accordion-trigger');
-    const toggle = () => li.classList.toggle('open');
-    trigger.addEventListener('click', toggle);
-    trigger.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-    });
+      `<div class="accordion-body">${item.bodyHtml}</div>`;
+    attachToggle(tile, tile.querySelector('.accordion-trigger'));
+    grid.appendChild(tile);
   });
+
+  // Swap the original items out for the tile grid (keeping the intro hint in place).
+  const ul = panel.querySelector('.value-list');
+  if (ul) {
+    ul.parentNode.replaceChild(grid, ul);
+  } else if (items.length) {
+    items[0].el.parentNode.insertBefore(grid, items[0].el);
+    items.forEach(it => it.el.remove());
+  }
+}
+
+function setupAccordions(panel) {
+  if (panel.dataset.accordion === 'on') return;
+  const isTile = TILE_PANEL_IDS.includes(panel.id);
+  const isAccordion = ACCORDION_PANEL_IDS.includes(panel.id);
+  if (!isTile && !isAccordion) return;
+
+  const items = collectItems(panel);
+  if (!items.length) return;
+  panel.dataset.accordion = 'on';
+
+  if (isTile) {
+    buildTiles(panel, items);
+  } else {
+    items.forEach(buildAccordionItem);
+  }
 }
 
 // ---------- Search ----------
