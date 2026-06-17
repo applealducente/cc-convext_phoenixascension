@@ -611,6 +611,28 @@ body::before {
   margin: 0;
   border-radius: 12px;
   cursor: pointer;
+  border: 1px solid rgba(74, 63, 71, 0.12);
+}
+
+/* Soft pastel fills so each tile's boundary is clear (cycles like the tabs) */
+.value-tile:nth-child(6n+1) { background: var(--tab-rose); }
+.value-tile:nth-child(6n+2) { background: var(--tab-peach); }
+.value-tile:nth-child(6n+3) { background: var(--tab-amber); }
+.value-tile:nth-child(6n+4) { background: var(--tab-lilac); }
+.value-tile:nth-child(6n+5) { background: var(--tab-pink); }
+.value-tile:nth-child(6n+6) { background: var(--tab-mint); }
+
+.value-tile .accordion-title {
+  color: var(--ink);
+}
+
+/* Keep the revealed answer on white so it stays easy to read */
+.value-tile .accordion-body {
+  background: var(--surface);
+}
+
+.value-tile.open .accordion-trigger {
+  border-bottom-color: rgba(74, 63, 71, 0.14);
 }
 
 .value-tile:hover {
