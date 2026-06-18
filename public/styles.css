@@ -1072,3 +1072,23 @@ body::before {
     animation: none;
   }
 }
+
+/* ===========================================================
+   Sales Pitch — grouped tile colors (added for v1.3)
+   Scoped to #panel-sales-pitch so no other tab is affected.
+   Tile order: 1-4 FCF no-tax, 5-8 FCF +tax, 9 Trial,
+   10 One-Time, 11 Negotiate.
+   =========================================================== */
+#panel-sales-pitch .value-tile:nth-child(1),
+#panel-sales-pitch .value-tile:nth-child(2),
+#panel-sales-pitch .value-tile:nth-child(3),
+#panel-sales-pitch .value-tile:nth-child(4) { background: #cfe3f7; }            /* FCF 2-6 hrs, no tax — blue  */
+
+#panel-sales-pitch .value-tile:nth-child(5),
+#panel-sales-pitch .value-tile:nth-child(6),
+#panel-sales-pitch .value-tile:nth-child(7),
+#panel-sales-pitch .value-tile:nth-child(8) { background: var(--tab-mint); }    /* FCF 2-6 hrs, + tax — green */
+
+#panel-sales-pitch .value-tile:nth-child(9)  { background: var(--tab-amber); }  /* Trial Cleaning — amber  */
+#panel-sales-pitch .value-tile:nth-child(10) { background: var(--tab-lilac); }  /* One-Time — lilac        */
+#panel-sales-pitch .value-tile:nth-child(11) { background: var(--tab-rose); }   /* Negotiate — rose        */

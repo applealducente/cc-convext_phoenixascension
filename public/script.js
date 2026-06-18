@@ -239,9 +239,9 @@ function escapeHtml(str) {
 }
 
 // Panels that become click-to-reveal tile grids.
-const TILE_PANEL_IDS = ['panel-value-statements', 'panel-onset-objections', 'panel-objections', 'panel-faqs'];
-// Panels that become full-width click-to-reveal accordions (none right now).
-const ACCORDION_PANEL_IDS = [];
+const TILE_PANEL_IDS = ['panel-value-statements', 'panel-onset-objections', 'panel-objections', 'panel-faqs', 'panel-sales-pitch'];
+// Panels that become full-width click-to-reveal accordions (dropdowns).
+const ACCORDION_PANEL_IDS = ['panel-verbatim'];
 
 // Pull a title + body out of one item container, regardless of how it's marked up.
 function extractItem(el) {
