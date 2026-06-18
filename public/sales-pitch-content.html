@@ -1,0 +1,234 @@
+<!-- ============================================================
+     SALES PITCH TAB CONTENT  (v1.3)
+     Paste this whole block into the admin editor for the
+     "Sales Pitch" tab. Self-contained: tiles + styling, no JS.
+     Colors are hardcoded and scoped to .sp-grid only, so they
+     do NOT affect any other colors on your site.
+     ============================================================ -->
+<style>
+  .sp-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+    gap:12px;
+    align-items:start;
+  }
+  .sp-grid details{
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,.18);
+  }
+  .sp-grid details[open]{ grid-column:1 / -1; }      /* expand full width on open */
+  .sp-grid summary{
+    list-style:none;
+    cursor:pointer;
+    padding:18px 16px;
+    font-weight:700;
+    font-size:15.5px;
+    color:#2a2a2a;
+    text-align:center;
+    min-height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .sp-grid summary::-webkit-details-marker{ display:none; }
+
+  /* ---- grouped tile colors (fixed, scoped to .sp-grid) ---- */
+  .sp-grid details.sp-notax    summary{ background:#d8e9ff; }  /* FCF 2-6 hrs, no tax  */
+  .sp-grid details.sp-tax      summary{ background:#d9f0dd; }  /* FCF 2-6 hrs, + tax   */
+  .sp-grid details.sp-trial    summary{ background:#ffe8c7; }  /* Trial Cleaning       */
+  .sp-grid details.sp-onetime  summary{ background:#e7ddff; }  /* One-Time Cleaning    */
+  .sp-grid details.sp-negotiate summary{ background:#ffe0e6; } /* Negotiate            */
+  .sp-grid details[open] summary{ filter:brightness(0.96); }
+
+  .sp-body{ background:#fff; padding:18px 20px; color:#222; }
+  .sp-body p{ margin:0 0 12px; line-height:1.5; }
+  .sp-step{ font-weight:700; color:#1d3a8a; display:block; margin-top:6px; }
+  .sp-note{ font-style:italic; color:#555; }
+  @media (max-width:640px){
+    .sp-grid{ grid-template-columns:1fr; }
+  }
+</style>
+
+<div class="sp-grid">
+
+  <details class="sp-notax">
+    <summary style="background:#d8e9ff; color:#2a2a2a;">FCF 2 HRS · $59 MF · $35/hr ETF</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 2 hours for the first cleaning. Normally that would cost around $150 — that's the national average.</p>
+      <p>Instead of $150, with ForeverClean, every 2-hour cleaning is just around $46 every time.</p>
+      <p>Here's what I can do for you — your first 2 hours are completely free, and all you pay today is $19. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $19. That covers your first month of membership, and your first 2 hours of cleaning are completely free.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $70.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-notax">
+    <summary style="background:#d8e9ff; color:#2a2a2a;">FCF 3 HRS · $59 MF · $35/hr ETF</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 3 hours for the first cleaning. Normally that would cost around $225 — that's the national average.</p>
+      <p>Instead of $225, with ForeverClean, every 3-hour cleaning is just around $69 every time.</p>
+      <p>Here's what I can do for you — your first 3 hours are completely free, and all you pay today is $19. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $19. That covers your first month of membership, and your first 3 hours of cleaning are completely free.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $105.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-notax">
+    <summary style="background:#d8e9ff; color:#2a2a2a;">FCF 4 HRS · $59 MF · $35/hr ETF</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 4 hours for the first cleaning. Normally that would cost around $300 — that's the national average.</p>
+      <p>Instead of $300, with ForeverClean, every 4-hour cleaning is just around $92 every time.</p>
+      <p>Here's what I can do for you — your first 4 hours of cleaning for only $38. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $38. The $19 covers your first month of membership, and the additional $19 covers the extra hour, since your home needs 4 hours instead of 3.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $140.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-notax">
+    <summary style="background:#d8e9ff; color:#2a2a2a;">FCF 6 HRS · $59 MF · $35/hr ETF</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 6 hours for the first cleaning. Normally that would cost around $450 — that's the national average.</p>
+      <p>Instead of $450, with ForeverClean, every 6-hour cleaning is just around $138 every time.</p>
+      <p>Here's what I can do for you — your first 6 hours of cleaning for only $78. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $78. The $19 covers your first month of membership, and the additional $59 covers the extra 3 hours, since your home needs 6 hours instead of 3.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime, right from your dashboard.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $210.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-tax">
+    <summary style="background:#d9f0dd; color:#2a2a2a;">FCF 2 HRS (+ Applicable Taxes)</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 2 hours for the first cleaning. Normally that would cost around $150 — that's the national average.</p>
+      <p>Instead of $150, with ForeverClean, every 2-hour cleaning is just around $46 every time.</p>
+      <p>Here's what I can do for you — your first 2 hours are completely free, and all you pay today is $19. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $19. That covers your first month of membership, and your first 2 hours of cleaning are completely free.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $70 plus applicable taxes.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-tax">
+    <summary style="background:#d9f0dd; color:#2a2a2a;">FCF 3 HRS (+ Applicable Taxes)</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 3 hours for the first cleaning. Normally that would cost around $225 — that's the national average.</p>
+      <p>Instead of $225, with ForeverClean, every 3-hour cleaning is just around $69 every time.</p>
+      <p>Here's what I can do for you — your first 3 hours are completely free, and all you pay today is $19. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $19. That covers your first month of membership, and your first 3 hours of cleaning are completely free.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $105 plus applicable taxes.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-tax">
+    <summary style="background:#d9f0dd; color:#2a2a2a;">FCF 4 HRS (+ Applicable Taxes)</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 4 hours for the first cleaning. Normally that would cost around $300 — that's the national average.</p>
+      <p>Instead of $300, with ForeverClean, every 4-hour cleaning is just around $92 every time.</p>
+      <p>Here's what I can do for you — your first 4 hours of cleaning for only $38. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $38. The $19 covers your first month of membership, and the additional $19 covers the extra hour, since your home needs 4 hours instead of 3.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $140 plus applicable taxes.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-tax">
+    <summary style="background:#d9f0dd; color:#2a2a2a;">FCF 6 HRS (+ Applicable Taxes)</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>Thanks for sharing all that with me. For a home your size, we usually recommend about 6 hours for the first cleaning. Normally that would cost around $450 — that's the national average.</p>
+      <p>Instead of $450, with ForeverClean, every 6-hour cleaning is just around $138 every time.</p>
+      <p>Here's what I can do for you — your first 6 hours of cleaning for only $78. How does that sound for you?</p>
+      <span class="sp-step">Part 2 — How ForeverClean Works</span>
+      <p>So here's how ForeverClean works, quick and simple.</p>
+      <p>Today, you only pay $78. The $19 covers your first month of membership, and the additional $59 covers the extra 3 hours, since your home needs 6 hours instead of 3.</p>
+      <p>After that, your membership continues at $59 a month, billed on the same date each month, until you cancel. That's what keeps your discounted rate of around $23/hour going for every cleaning after your first one, and you can cancel anytime, right from your dashboard.</p>
+      <p>The only thing to flag is a small early cancellation fee if you end it before 6 paid months. It's $35 times the hours of your first cleaning, so in your case that would be $210.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-trial">
+    <summary style="background:#ffe8c7; color:#2a2a2a;">Trial Cleaning</summary>
+    <div class="sp-body">
+      <span class="sp-step">Part 1 — The Offer</span>
+      <p>We'd be happy to take care of that for you! You can try our service at a discounted rate of $X for 30 days. You can cancel with no obligation anytime within those 30 days if it's not the right fit. Does this option work for you?</p>
+      <span class="sp-step">Part 2 — What Happens After the Trial</span>
+      <p>If you don't cancel within 30 days, the membership will automatically continue at $59 per month, with a 6-month minimum commitment, and your future cleanings stay heavily discounted at around $23/hour.</p>
+      <p>If you cancel before completing 6 paid months of membership, a $99 early cancellation fee applies.</p>
+      <p>When would you like to have your cleaning?</p>
+    </div>
+  </details>
+
+  <details class="sp-onetime">
+    <summary style="background:#e7ddff; color:#2a2a2a;">One-Time Only Cleaning</summary>
+    <div class="sp-body">
+      <span class="sp-step">Step 1: Acknowledge &amp; Present the One-Time Option</span>
+      <p>Got it! We'd be happy to take care of that for you! For standard one-time cleanings, this would be at our regular price of $X for X hours. If the cleaning goes over 3 hours, I can also apply a special discount to bring it down to $Y. Does this work for what you need today?</p>
+      <span class="sp-step">Step 2: Gauge Openness to Membership</span>
+      <p>Out of curiosity, if this first cleaning ends up being super helpful, do you see yourself needing this kind of help every so often? I only ask because a lot of our customers start with a one-time clean but end up finding value in having ongoing support, and our ForeverClean membership could save you up to 60% each time you have a cleaning. It starts as low as ($59) a month, and the savings from today alone could already make up for it. Would you like me to walk you through what that could look like?</p>
+      <span class="sp-step">Step 3: Qualify the Objection</span>
+      <p class="sp-note">Note to agent: if the customer says no to the membership, explore "why" to better match their needs.</p>
+      <p>Totally fair. Just so I can better understand, is it more about the cost, because there's a commitment, or do you just feel like you don't need regular cleanings right now?</p>
+      <span class="sp-step">Step 4: Negotiate</span>
+      <p>• If declining because of MF: reduce to $54, then to $49 if necessary.<br>
+         • If declining because of MCT duration: offer to shorten.<br>
+         • If both: offer reducing both.<br>
+         • If the response has nothing to do with cost/commitment: proceed to booking the one-time clean.</p>
+      <p><strong>If the customer compared the FC ETF and the One-Time rate:</strong> That's why the FC membership offers better value overall. It's designed for ongoing service, but even if your plans change unexpectedly, the early termination fee is a flat rate of $35/hr based on the hours of your first cleaning. It's still lower than the ($X) one-time cleaning rate, so you're getting the best rate either way.</p>
+    </div>
+  </details>
+
+  <details class="sp-negotiate">
+    <summary style="background:#ffe0e6; color:#2a2a2a;">Negotiate</summary>
+    <div class="sp-body">
+      <span class="sp-step">Step 1: Acknowledge</span>
+      <span class="sp-step">Step 2: Ask Qualifying Question(s) &amp; Negotiate</span>
+      <p><strong>2.1 — Ask qualifying questions:</strong> Is the membership not a good fit because of the cost, there is a commitment, or because you just don't feel you need regular cleanings right now?</p>
+      <p><strong>2.2 — Adjust MF or MCT based on trigger:</strong></p>
+      <p>• If the trigger is MF = reduce to $54, then to $49 if necessary.<br>
+         • If the trigger is MCT duration = offer to shorten.<br>
+         • If both MF and MCT duration = offer reducing both.<br>
+         • If the customer's response has nothing to do with cost or commitment, proceed to Step 3.<br>
+         • If the customer agrees, proceed to booking.<br>
+         • If the customer declines, proceed to Step 3.</p>
+      <span class="sp-step">Step 3: Highlight FC Value + Offer One-Time / Trial Cleaning</span>
+      <p>I totally understand that your (move-in/out, event) cleaning is the priority right now, and we're happy to take care of that for you. If the membership isn't the right fit, no worries at all!</p>
+      <p>You can try our service at a discounted rate of $X for 30 days. You can cancel with no obligation anytime within those 30 days if it's not the right fit. If you don't cancel within 30 days, the membership will automatically continue at $59 per month with a 6-month minimum commitment. If you cancel before completing 6 paid months of membership, a $99 early termination fee applies.</p>
+      <p>Does this option work better for you?</p>
+    </div>
+  </details>
+
+</div>
