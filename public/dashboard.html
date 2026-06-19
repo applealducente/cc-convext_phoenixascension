@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phoenix Ascension — Usage Dashboard</title>
+<style>
+  :root{
+    --ink:#1c140d; --ember:#ff6a1a; --ember2:#c2410c; --ash:#fbf7f1;
+    --card:#ffffff; --line:#ece4d8; --muted:#7a6e62; --good:#1a8f4c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:#f6f1e8;color:#2a2018}
+  a{color:var(--ember2)}
+  .wrap{max-width:1040px;margin:0 auto;padding:22px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{font-weight:800;letter-spacing:.01em}
+  .brand span{color:var(--ember2)}
+  .brand small{display:block;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+  .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);
+    background:#fff;padding:9px 14px;font-weight:600}
+  button.primary{background:linear-gradient(90deg,var(--ember),#ff9d2f);color:#fff;border:0}
+  button.danger{color:#b3261e;border-color:#f0c9c5}
+  button:hover{filter:brightness(1.03)}
+
+  /* gate */
+  .gate{max-width:380px;margin:9vh auto;background:#fff;border-radius:16px;padding:28px;
+    box-shadow:0 18px 50px rgba(0,0,0,.12)}
+  .gate h1{font-size:19px;margin:0 0 4px}
+  .gate p{color:var(--muted);margin:0 0 18px;font-size:14px}
+  .gate label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#555;margin-bottom:6px}
+  .gate input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:15px}
+  .gate input:focus{outline:none;border-color:var(--ember)}
+  .gate button{width:100%;margin-top:16px}
+  .err{color:#b3261e;font-size:13px;min-height:18px;margin-top:8px}
+
+  /* stat cards */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .stat .n{font-size:30px;font-weight:800;line-height:1}
+  .stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:6px}
+  .stat.hl .n{color:var(--ember2)}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+  .panel h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin:0 0 14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:#fff4ea;border:1px solid #ffd9bd;color:#9a3d12;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+  .chip .e{color:var(--muted);font-weight:400}
+  .empty{color:var(--muted);font-size:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:0}
+  .email{color:var(--muted);font-size:12px}
+
+  /* daily bars */
+  .bars{display:flex;flex-direction:column;gap:8px}
+  .bar-row{display:grid;grid-template-columns:96px 1fr 84px;align-items:center;gap:10px}
+  .bar-date{font-size:12px;color:var(--muted)}
+  .bar-track{background:#f1e9dd;border-radius:6px;height:18px;overflow:hidden}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--ember),#ff9d2f);border-radius:6px;min-width:2px}
+  .bar-val{font-size:12px;color:#5a4a3c;text-align:right}
+
+  .hide{display:none}
+  @media (max-width:720px){ .stats{grid-template-columns:repeat(2,1fr)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- password gate -->
+  <div id="gate" class="gate">
+    <h1>Usage Dashboard</h1>
+    <p>Enter the admin password to view sign-in activity.</p>
+    <label for="pw">Admin password</label>
+    <input id="pw" type="password" placeholder="••••••••">
+    <button class="primary" id="enter">View dashboard</button>
+    <div class="err" id="gateErr"></div>
+  </div>
+
+  <!-- dashboard -->
+  <div id="dash" class="hide">
+    <header>
+      <div class="brand">Phoenix <span>Ascension</span><small>Usage Dashboard · US Central</small></div>
+      <div class="row-actions">
+        <button id="refresh">Refresh</button>
+        <button id="signout">Lock</button>
+        <button class="danger" id="reset">Reset data</button>
+      </div>
+    </header>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="panel">
+      <h2>Active today</h2>
+      <div id="activeToday" class="chips"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Sign-ins per day (last 14)</h2>
+      <div id="bars" class="bars"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Agents</h2>
+      <div id="agents"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Recent activity</h2>
+      <div id="recent"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var TZ='America/Chicago';
+  var pw='';
+  var gate=document.getElementById('gate'), dash=document.getElementById('dash');
+  var pwI=document.getElementById('pw'), gateErr=document.getElementById('gateErr');
+
+  function todayStr(){ try{return new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(new Date());}catch(e){return new Date().toISOString().slice(0,10);} }
+  function fmtDateTime(ts){ try{return new Date(ts).toLocaleString('en-US',{timeZone:TZ,month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}catch(e){return new Date(ts).toLocaleString();} }
+  function fmtDate(ts){ try{return new Date(ts).toLocaleDateString('en-US',{timeZone:TZ,month:'short',day:'numeric',year:'numeric'});}catch(e){return new Date(ts).toLocaleDateString();} }
+  function dayLabel(d){ var p=d.split('-'); return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+  function esc(s){ return (s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function fetchReport(action){
+    return fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:action||'report',password:pw})});
+  }
+
+  function enter(){
+    pw=pwI.value;
+    if(!pw){ gateErr.textContent='Enter the password.'; return; }
+    gateErr.textContent='Checking…';
+    fetchReport('report').then(function(r){
+      if(r.status===401){ gateErr.textContent='Incorrect password.'; return; }
+      if(!r.ok){ gateErr.textContent='Could not load (server error).'; return; }
+      return r.json().then(function(data){
+        gate.classList.add('hide'); dash.classList.remove('hide');
+        render(data);
+      });
+    }).catch(function(){ gateErr.textContent='Network error.'; });
+  }
+
+  function load(){
+    fetchReport('report').then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){ if(d) render(d); }).catch(function(){});
+  }
+
+  function render(data){
+    data=data||{users:{},events:[]};
+    var users=data.users||{}, events=Array.isArray(data.events)?data.events:[];
+    var arr=Object.keys(users).map(function(k){return users[k];});
+    var today=todayStr();
+
+    // last 7 calendar days set
+    var last7={}; for(var i=0;i<7;i++){ var d=new Date(); d.setDate(d.getDate()-i); last7[new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(d)]=true; }
+
+    var activeTodayArr=arr.filter(function(u){return u.days && u.days[today];});
+    var signinsToday=events.filter(function(e){return e.day===today;}).length;
+    var signins7=events.filter(function(e){return last7[e.day];}).length;
+
+    // stat cards
+    document.getElementById('stats').innerHTML =
+      card(arr.length,'Total agents','') +
+      card(activeTodayArr.length,'Active today','hl') +
+      card(signinsToday,'Sign-ins today','') +
+      card(signins7,'Sign-ins (7 days)','');
+
+    // active today chips
+    var at=document.getElementById('activeToday');
+    if(activeTodayArr.length){
+      at.innerHTML=activeTodayArr.sort(byLastSeen).map(function(u){
+        return '<span class="chip">'+esc(u.name)+' <span class="e">· '+esc(u.email)+'</span></span>';
+      }).join('');
+    } else { at.innerHTML='<span class="empty">No sign-ins yet today.</span>'; }
+
+    // daily bars (last 14 days)
+    var days=[]; for(var j=13;j>=0;j--){ var dd=new Date(); dd.setDate(dd.getDate()-j); days.push(new Intl.DateTimeFormat('en-CA',{timeZone:TZ}).format(dd)); }
+    var byDay={}; events.forEach(function(e){ (byDay[e.day]=byDay[e.day]||[]).push(e.email); });
+    var max=1; days.forEach(function(d){ if(byDay[d]) max=Math.max(max,byDay[d].length); });
+    document.getElementById('bars').innerHTML=days.map(function(d){
+      var list=byDay[d]||[]; var n=list.length; var uniq=Object.keys(list.reduce(function(a,e){a[e]=1;return a;},{})).length;
+      var w=Math.round((n/max)*100);
+      return '<div class="bar-row"><div class="bar-date">'+dayLabel(d)+'</div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%"></div></div>'+
+        '<div class="bar-val">'+n+' sign-in'+(n===1?'':'s')+(uniq?(' · '+uniq+' ppl'):'')+'</div></div>';
+    }).join('');
+
+    // agents table
+    var ag=document.getElementById('agents');
+    if(arr.length){
+      var rows=arr.sort(byLastSeen).map(function(u){
+        return '<tr><td>'+esc(u.name)+'<div class="email">'+esc(u.email)+'</div></td>'+
+          '<td class="num">'+(u.sessions||0)+'</td>'+
+          '<td>'+fmtDate(u.firstSeen)+'</td>'+
+          '<td>'+fmtDateTime(u.lastSeen)+'</td></tr>';
+      }).join('');
+      ag.innerHTML='<table><thead><tr><th>Agent</th><th class="num">Sessions</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>'+rows+'</tbody></table>';
+    } else { ag.innerHTML='<div class="empty">No agents have signed in yet.</div>'; }
+
+    // recent activity
+    var rc=document.getElementById('recent');
+    if(events.length){
+      var er=events.slice(0,40).map(function(e){
+        return '<tr><td>'+esc(e.name)+'<div class="email">'+esc(e.email)+'</div></td><td>'+fmtDateTime(e.ts)+'</td></tr>';
+      }).join('');
+      rc.innerHTML='<table><thead><tr><th>Agent</th><th>Signed in</th></tr></thead><tbody>'+er+'</tbody></table>';
+    } else { rc.innerHTML='<div class="empty">No activity recorded yet.</div>'; }
+  }
+
+  function card(n,l,cls){ return '<div class="stat '+(cls||'')+'"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+  function byLastSeen(a,b){ return (b.lastSeen||0)-(a.lastSeen||0); }
+
+  document.getElementById('enter').addEventListener('click',enter);
+  pwI.addEventListener('keydown',function(e){ if(e.key==='Enter') enter(); });
+  document.getElementById('refresh').addEventListener('click',load);
+  document.getElementById('signout').addEventListener('click',function(){ pw=''; pwI.value=''; dash.classList.add('hide'); gate.classList.remove('hide'); });
+  document.getElementById('reset').addEventListener('click',function(){
+    if(!confirm('Erase ALL usage data? This cannot be undone.')) return;
+    fetchReport('reset').then(function(r){ if(r.ok){ load(); } else { alert('Reset failed.'); } });
+  });
+})();
+</script>
+</body>
+</html>

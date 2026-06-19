@@ -1092,3 +1092,36 @@ body::before {
 #panel-sales-pitch .value-tile:nth-child(9)  { background: var(--tab-amber); }  /* Trial Cleaning — amber  */
 #panel-sales-pitch .value-tile:nth-child(10) { background: var(--tab-lilac); }  /* One-Time — lilac        */
 #panel-sales-pitch .value-tile:nth-child(11) { background: var(--tab-rose); }   /* Negotiate — rose        */
+
+/* ===========================================================
+   Sign-in gate (added for usage tracking)
+   =========================================================== */
+body.locked{ overflow:hidden; }
+.signin-overlay{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  background:linear-gradient(180deg,#1a120c 0%,#2a1a0e 70%,#3a230f 100%);
+}
+.signin-overlay.hidden{ display:none; }
+.signin-card{
+  width:100%; max-width:382px; background:#fff; border-radius:18px;
+  padding:30px 28px; box-shadow:0 24px 70px rgba(0,0,0,.45); text-align:left;
+}
+.signin-logo{ font-weight:800; letter-spacing:.01em; color:#c2410c; font-size:18px; }
+.signin-sub{ color:#6b6b6b; margin:6px 0 20px; font-size:14px; }
+.signin-card label{
+  display:block; font-size:12px; font-weight:700; letter-spacing:.04em;
+  text-transform:uppercase; color:#555; margin:14px 0 6px;
+}
+.signin-card input{
+  width:100%; padding:12px 14px; border:1.5px solid #e3ddd4;
+  border-radius:10px; font-size:15px; font-family:inherit;
+}
+.signin-card input:focus{ outline:none; border-color:#ff6a1a; }
+.signin-btn{
+  width:100%; margin-top:22px; padding:13px; border:0; border-radius:10px; cursor:pointer;
+  background:linear-gradient(90deg,#ff6a1a,#ff9d2f); color:#fff; font-weight:700; font-size:15px;
+}
+.signin-btn:hover{ filter:brightness(1.05); }
+.signin-btn:disabled{ opacity:.7; cursor:default; }
+.signin-err{ color:#d40000; font-size:13px; min-height:18px; margin-top:10px; }

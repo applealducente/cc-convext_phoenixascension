@@ -6,7 +6,7 @@
 <title>Phoenix Sales Script Guide</title>
 <link rel="stylesheet" href="styles.css?v=10">
 </head>
-<body>
+<body class="locked">
 
 <header class="topbar">
   <div class="topbar-left">
@@ -145,6 +145,21 @@
   </div>
 </div>
 
+<!-- Sign-in gate (locks the guide until Name + Email are entered) -->
+<div class="signin-overlay" id="signinOverlay">
+  <div class="signin-card">
+    <div class="signin-logo">PHOENIX ASCENSION™</div>
+    <p class="signin-sub">Sign in to open the Call Flow Guide.</p>
+    <label for="si-name">Name</label>
+    <input id="si-name" type="text" placeholder="Your full name" autocomplete="name">
+    <label for="si-email">Email</label>
+    <input id="si-email" type="email" placeholder="you@company.com" autocomplete="email">
+    <button class="signin-btn" id="si-enter">Enter Guide</button>
+    <p class="signin-err" id="si-err"></p>
+  </div>
+</div>
+
+<script src="auth.js?v=10"></script>
 <script src="script.js?v=10"></script>
 </body>
 </html>
