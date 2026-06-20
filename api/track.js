@@ -34,8 +34,22 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Storage is not connected to this project yet.' });
   }
 
-  // ---------- admin: report / reset ----------
-  if (action === 'report' || action === 'reset') {
+  // ---------- TLs: view report (separate dashboard password) ----------
+  if (action === 'report') {
+    const dashPassword = process.env.DASHBOARD_PASSWORD;
+    if (!dashPassword) {
+      return res.status(500).json({ error: 'Dashboard password not set. Add a DASHBOARD_PASSWORD environment variable in Vercel, then redeploy.' });
+    }
+    if (!body.password || body.password !== dashPassword) {
+      return res.status(401).json({ error: 'Incorrect password.' });
+    }
+    let data;
+    try { data = await kvGet(USAGE_KEY); } catch (e) { data = null; }
+    return res.status(200).json(data || { users: {}, events: [] });
+  }
+
+  // ---------- admin only: wipe all usage data ----------
+  if (action === 'reset') {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) {
       return res.status(500).json({ error: 'Admin password not configured on server.' });
@@ -43,15 +57,8 @@ module.exports = async function handler(req, res) {
     if (!body.password || body.password !== adminPassword) {
       return res.status(401).json({ error: 'Incorrect password.' });
     }
-
-    if (action === 'reset') {
-      try { await kvDel(USAGE_KEY); } catch (e) { /* ignore */ }
-      return res.status(200).json({ ok: true });
-    }
-
-    let data;
-    try { data = await kvGet(USAGE_KEY); } catch (e) { data = null; }
-    return res.status(200).json(data || { users: {}, events: [] });
+    try { await kvDel(USAGE_KEY); } catch (e) { /* ignore */ }
+    return res.status(200).json({ ok: true });
   }
 
   // ---------- agent: log a sign-in ----------
