@@ -75,8 +75,8 @@
   <!-- password gate -->
   <div id="gate" class="gate">
     <h1>Usage Dashboard</h1>
-    <p>Enter the admin password to view sign-in activity.</p>
-    <label for="pw">Admin password</label>
+    <p>Enter the dashboard password to view sign-in activity.</p>
+    <label for="pw">Dashboard password</label>
     <input id="pw" type="password" placeholder="••••••••">
     <button class="primary" id="enter">View dashboard</button>
     <div class="err" id="gateErr"></div>
@@ -226,7 +226,15 @@
   document.getElementById('signout').addEventListener('click',function(){ pw=''; pwI.value=''; dash.classList.add('hide'); gate.classList.remove('hide'); });
   document.getElementById('reset').addEventListener('click',function(){
     if(!confirm('Erase ALL usage data? This cannot be undone.')) return;
-    fetchReport('reset').then(function(r){ if(r.ok){ load(); } else { alert('Reset failed.'); } });
+    var adminPw=prompt('Enter the ADMIN password to reset. (The shared dashboard password will not work.)');
+    if(!adminPw) return;
+    fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'reset',password:adminPw})})
+      .then(function(r){
+        if(r.ok){ load(); alert('Usage data cleared.'); }
+        else if(r.status===401){ alert('Incorrect admin password.'); }
+        else { alert('Reset failed.'); }
+      }).catch(function(){ alert('Network error.'); });
   });
 })();
 </script>
