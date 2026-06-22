@@ -162,5 +162,69 @@
 
 <script src="auth.js?v=11"></script>
 <script src="script.js?v=10"></script>
+
+<!-- Team sign-in: adds Team dropdown + records sign-ins to /api/usage -->
+<script>
+(function () {
+  function init() {
+    var emailEl = document.getElementById('si-email');
+    var btn = document.getElementById('si-enter');
+    if (!emailEl || !btn) { setTimeout(init, 300); return; } // wait for gate
+    if (document.getElementById('teamSelect')) return;        // already added
+
+    // build the Team field (label + dropdown), styled to match the card
+    var label = document.createElement('label');
+    label.setAttribute('for', 'teamSelect');
+    label.textContent = 'Team';
+
+    var sel = document.createElement('select');
+    sel.id = 'teamSelect';
+    sel.style.cssText =
+      'width:100%;padding:10px 12px;margin:4px 0 4px;border-radius:8px;' +
+      'border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);' +
+      'color:inherit;font:inherit;';
+    sel.innerHTML = '<option value="" disabled selected>Loading teams…</option>';
+
+    // insert the Team field right before the "Enter Guide" button
+    btn.parentNode.insertBefore(label, btn);
+    btn.parentNode.insertBefore(sel, btn);
+
+    // fill the dropdown from the teams you manage on usage.html
+    fetch('/api/usage?action=teams')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var teams = (d && d.teams) || [];
+        sel.innerHTML = teams.length
+          ? '<option value="" disabled selected>Select your team</option>' +
+            teams.map(function (t) {
+              var n = t && t.name ? t.name : t;
+              var safe = String(n).replace(/"/g, '&quot;');
+              return '<option value="' + safe + '">' + n + '</option>';
+            }).join('')
+          : '<option value="" disabled selected>No teams set up yet</option>';
+      })
+      .catch(function () {
+        sel.innerHTML = '<option value="" disabled selected>Couldn\'t load teams</option>';
+      });
+
+    // when they click Enter Guide, record the sign-in (with team)
+    btn.addEventListener('click', function () {
+      var name = (document.getElementById('si-name') || {}).value || '';
+      var email = (document.getElementById('si-email') || {}).value || '';
+      var team = sel.value || '';
+      name = name.trim(); email = email.trim();
+      if (!name || !email) return; // your existing validation handles empties
+      fetch('/api/usage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'signin', name: name, email: email, team: team })
+      }).catch(function () {});
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
+</script>
 </body>
 </html>
