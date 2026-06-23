@@ -38,6 +38,7 @@
     <button class="admin-section-tab active" data-section="tabs">Tabs &amp; Scripts</button>
     <button class="admin-section-tab" data-section="rates">Calculator Rates</button>
     <button class="admin-section-tab" data-section="toolbar">Footer Buttons</button>
+    <button class="admin-section-tab" data-section="teams">Teams</button>
   </nav>
 
   <main class="admin-main">
@@ -106,6 +107,13 @@
       <p class="hint">Shortcut buttons on the floating toolbar (bottom-right of the live site).</p>
       <div id="toolbarList"></div>
       <button class="admin-btn-secondary" id="addToolbarBtn">+ Add footer button</button>
+    </section>
+
+    <!-- TEAMS -->
+    <section class="admin-section" id="section-teams">
+      <p class="hint">Teams that appear in the sign-in dropdown agents pick from. Add or remove teams here, then click <strong>Save &amp; publish live</strong> &mdash; no redeploy needed. Uncheck <em>Active</em> to hide a team from sign-in without losing its history.</p>
+      <div id="teamsList"></div>
+      <button class="admin-btn-secondary" id="addTeamBtn">+ Add team</button>
     </section>
 
   </main>

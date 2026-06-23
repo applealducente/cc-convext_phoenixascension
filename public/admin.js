@@ -79,6 +79,7 @@ async function loadContentForEditing() {
   renderTabsEditor();
   renderRatesEditor();
   renderToolbarEditor();
+  renderTeamsEditor();
 }
 
 // ===================== TABS & SCRIPTS =====================
@@ -337,6 +338,49 @@ document.getElementById('addToolbarBtn').addEventListener('click', () => {
   CONTENT.toolbar.push({ id: 'notesModal', label: 'New button', icon: '*' });
   renderToolbarEditor();
 });
+
+// ===================== TEAMS =====================
+
+function renderTeamsEditor() {
+  if (!Array.isArray(CONTENT.teams)) CONTENT.teams = [];
+  const container = document.getElementById('teamsList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  CONTENT.teams.forEach((team, index) => {
+    const row = document.createElement('div');
+    row.className = 'kv-row';
+    row.innerHTML = `
+      <input type="text" class="team-name" placeholder="Team name" value="${escapeAttr(team.name || '')}" style="flex:1;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;">
+        <input type="checkbox" class="team-active" ${team.active !== false ? 'checked' : ''}> Active
+      </label>
+      <button type="button">Remove</button>
+    `;
+
+    row.querySelector('.team-name').addEventListener('input', (e) => {
+      team.name = e.target.value;
+    });
+    row.querySelector('.team-active').addEventListener('change', (e) => {
+      team.active = e.target.checked;
+    });
+    row.querySelector('button').addEventListener('click', () => {
+      CONTENT.teams.splice(index, 1);
+      renderTeamsEditor();
+    });
+
+    container.appendChild(row);
+  });
+}
+
+const addTeamBtn = document.getElementById('addTeamBtn');
+if (addTeamBtn) {
+  addTeamBtn.addEventListener('click', () => {
+    if (!Array.isArray(CONTENT.teams)) CONTENT.teams = [];
+    CONTENT.teams.push({ name: 'New team', active: true });
+    renderTeamsEditor();
+  });
+}
 
 // ===================== SAVE / RESET =====================
 

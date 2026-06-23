@@ -88,6 +88,7 @@
       <div class="brand">Phoenix <span>Ascension</span><small>Usage Dashboard · US Central</small></div>
       <div class="row-actions">
         <button id="refresh">Refresh</button>
+        <button class="primary" id="downloadCsv">Download CSV</button>
         <button id="signout">Lock</button>
         <button class="danger" id="reset">Reset data</button>
       </div>
@@ -103,6 +104,11 @@
     <div class="panel">
       <h2>Sign-ins per day (last 14)</h2>
       <div id="bars" class="bars"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Sign-ins by team</h2>
+      <div id="teamBreakdown"></div>
     </div>
 
     <div class="panel">
@@ -200,21 +206,55 @@
     if(arr.length){
       var rows=arr.sort(byLastSeen).map(function(u){
         return '<tr><td>'+esc(u.name)+'<div class="email">'+esc(u.email)+'</div></td>'+
+          '<td>'+(u.team?esc(u.team):'<span class="email">\u2014</span>')+'</td>'+
           '<td class="num">'+(u.sessions||0)+'</td>'+
           '<td>'+fmtDate(u.firstSeen)+'</td>'+
           '<td>'+fmtDateTime(u.lastSeen)+'</td></tr>';
       }).join('');
-      ag.innerHTML='<table><thead><tr><th>Agent</th><th class="num">Sessions</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>'+rows+'</tbody></table>';
+      ag.innerHTML='<table><thead><tr><th>Agent</th><th>Team</th><th class="num">Sessions</th><th>First seen</th><th>Last seen</th></tr></thead><tbody>'+rows+'</tbody></table>';
     } else { ag.innerHTML='<div class="empty">No agents have signed in yet.</div>'; }
 
     // recent activity
     var rc=document.getElementById('recent');
     if(events.length){
       var er=events.slice(0,40).map(function(e){
-        return '<tr><td>'+esc(e.name)+'<div class="email">'+esc(e.email)+'</div></td><td>'+fmtDateTime(e.ts)+'</td></tr>';
+        return '<tr><td>'+esc(e.name)+'<div class="email">'+esc(e.email)+'</div></td><td>'+(e.team?esc(e.team):'<span class="email">\u2014</span>')+'</td><td>'+fmtDateTime(e.ts)+'</td></tr>';
       }).join('');
-      rc.innerHTML='<table><thead><tr><th>Agent</th><th>Signed in</th></tr></thead><tbody>'+er+'</tbody></table>';
+      rc.innerHTML='<table><thead><tr><th>Agent</th><th>Team</th><th>Signed in</th></tr></thead><tbody>'+er+'</tbody></table>';
     } else { rc.innerHTML='<div class="empty">No activity recorded yet.</div>'; }
+
+    // ----- sign-ins by team -----
+    var tb=document.getElementById('teamBreakdown');
+    var byTeam={};
+    events.forEach(function(e){ var k=(e.team&&e.team.trim())?e.team.trim():'(no team)'; byTeam[k]=(byTeam[k]||0)+1; });
+    var teamNames=Object.keys(byTeam);
+    if(teamNames.length){
+      var tmax=1; teamNames.forEach(function(k){ tmax=Math.max(tmax,byTeam[k]); });
+      tb.innerHTML='<div class="bars">'+teamNames.sort(function(a,b){return byTeam[b]-byTeam[a];}).map(function(k){
+        var w=Math.round((byTeam[k]/tmax)*100);
+        return '<div class="bar-row"><div class="bar-date">'+esc(k)+'</div>'+
+          '<div class="bar-track"><div class="bar-fill" style="width:'+w+'%"></div></div>'+
+          '<div class="bar-val">'+byTeam[k]+' sign-in'+(byTeam[k]===1?'':'s')+'</div></div>';
+      }).join('')+'</div>';
+    } else { tb.innerHTML='<div class="empty">No sign-ins yet.</div>'; }
+
+    // stash latest events for CSV export
+    LAST_EVENTS = events;
+  }
+
+  var LAST_EVENTS = [];
+  function downloadCsv(){
+    var rows = LAST_EVENTS || [];
+    var header=['Name','Email','Team','Timestamp'];
+    var csv=[header.join(',')].concat(rows.map(function(e){
+      return [e.name, e.email, e.team||'', new Date(e.ts).toISOString()]
+        .map(function(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; }).join(',');
+    })).join('\r\n');
+    var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.download='phoenix-utilization-'+todayStr()+'.csv';
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
   function card(n,l,cls){ return '<div class="stat '+(cls||'')+'"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
@@ -223,6 +263,7 @@
   document.getElementById('enter').addEventListener('click',enter);
   pwI.addEventListener('keydown',function(e){ if(e.key==='Enter') enter(); });
   document.getElementById('refresh').addEventListener('click',load);
+  document.getElementById('downloadCsv').addEventListener('click',downloadCsv);
   document.getElementById('signout').addEventListener('click',function(){ pw=''; pwI.value=''; dash.classList.add('hide'); gate.classList.remove('hide'); });
   document.getElementById('reset').addEventListener('click',function(){
     if(!confirm('Erase ALL usage data? This cannot be undone.')) return;
