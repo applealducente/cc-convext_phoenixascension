@@ -65,6 +65,7 @@ module.exports = async function handler(req, res) {
   if (action === 'log') {
     const name = (body.name || '').toString().trim().slice(0, 80);
     const email = (body.email || '').toString().trim().toLowerCase().slice(0, 120);
+    const team = (body.team || '').toString().trim().slice(0, 80);
 
     if (!name || !email || email.indexOf('@') < 1 || email.indexOf('.') < 0) {
       return res.status(400).json({ error: 'Name and a valid email are required.' });
@@ -81,16 +82,17 @@ module.exports = async function handler(req, res) {
 
     let u = data.users[email];
     if (!u) {
-      u = { name: name, email: email, firstSeen: ts, lastSeen: ts, sessions: 0, days: {} };
+      u = { name: name, email: email, team: team, firstSeen: ts, lastSeen: ts, sessions: 0, days: {} };
       data.users[email] = u;
     }
     u.name = name;                 // keep the latest spelling of their name
+    if (team) u.team = team;       // keep their most recent team
     u.lastSeen = ts;
     u.sessions = (u.sessions || 0) + 1;
     u.days = u.days || {};
     u.days[day] = (u.days[day] || 0) + 1;
 
-    data.events.unshift({ name: name, email: email, ts: ts, day: day });
+    data.events.unshift({ name: name, email: email, team: team, ts: ts, day: day });
     if (data.events.length > MAX_EVENTS) data.events.length = MAX_EVENTS;
 
     try {
